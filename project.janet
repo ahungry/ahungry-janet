@@ -34,7 +34,15 @@
    :lflags ["-lcurl"]
    :source @["src/curl_wrap_app.c"])
 
+(declare-native
+   :name "com_ahungry_sqlite3"
+   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC"]
+   :lflags ["-lsqlite3"]
+   :source @["src/sqlite3/main.c"])
+
 (declare-source :source @["lib/com.ahungry.janet"])
+(declare-source :source @["lib/com.ahungry.db.janet"])
+(declare-source :source @["lib/com.ahungry.db.sqlite.janet"])
 (declare-source :source @["lib/com.ahungry.meta.janet"])
 (declare-source :source @["lib/com.ahungry.net.janet"])
 (declare-source :source @["lib/com.ahungry.net.client.janet"])
