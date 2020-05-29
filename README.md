@@ -39,6 +39,8 @@ Wire protocols and serialization around JSON and YAML/TOML/JDN soon.
 Making a curl call to http bin:
 
 ```clojure
+(import com.ahungry.net.client :as net.client)
+
 # This
 (pp (-> (net.client/http-get "http://httpbin.org/ip") json/decode))
 
