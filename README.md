@@ -11,6 +11,7 @@ Ahungry Library for Janet
     - [com.ahungry.gui](#comahungrygui)
     - [com.ahungry.net](#comahungrynet)
     - [com.ahungry.wire](#comahungrywire)
+- [Samples](#samples)
 - [License](#license)
 
 <!-- markdown-toc end -->
