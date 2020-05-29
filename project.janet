@@ -62,14 +62,11 @@
    :source @["src/iup_wrap.c"]))
 
 (defn build-iup-mingw []
-  (pp "Not implemented yet"))
-
-(defn build-iup-mingw-wip []
   # Make sure we have appropriate include/header files etc.
   (or (and (os/stat "./deps/win/iup")
            (os/stat "./deps/win/im"))
       (os/shell "./get-iup-windows-files.sh"))
-  (os/setenv "CC" "x86_64-w64-mingw32-gcc")
+  #(os/setenv "CC" "x86_64-w64-mingw32-gcc")
   (declare-native
    :name "com_ahungry_iup"
    :cflags ["-std=c99"
@@ -80,9 +77,11 @@
             "-shared"
             "-static"
             "-D_WIN32_WINNT=0x0600"
+            (string/format "-I%s" ((os/environ) "JANET_AMALG_SOURCE_DIR"))
             ]
    :lflags ["-Wl,--out-implib,libiup_dll.a"
             "-L./deps/win/iup"
+            "-L./deps/win/im"
             "-lm"
             "-pthread"
             "-lwinmm"
@@ -117,6 +116,8 @@
             "-L./build/win/im"
             "-l:libim.a"
             "-l:libz.a"
+            (string/format "-L%s" ((os/environ) "JANET_DLL_DIR"))
+            "-l:libjanet_dll.a"
             ]
    :source @["src/iup_wrap.c"]))
 
