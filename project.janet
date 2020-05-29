@@ -17,29 +17,55 @@
  )
 
 #(os/shell "./get-iup-linux-files.sh")
+(defn get-mingw-cflags []
+  ["-std=c99"
+   "-Wall"
+   "-Wextra"
+   "-fPIC"
+   "-shared"
+   #"-static"
+   "-D_WIN32_WINNT=0x0600"
+   (string/format "-I%s" ((os/environ) "JANET_AMALG_SOURCE_DIR"))
+   ])
+
+(defn get-mingw-lflags []
+  [
+   (string/format "-L%s" ((os/environ) "JANET_DLL_DIR"))
+   "-l:libjanet_dll.a"
+   ])
+
+(defn get-cflags []
+  (if (= "x86_64-w64-mingw32-gcc" ((os/environ) "CC"))
+    (get-mingw-cflags)
+    []))
+
+(defn get-lflags []
+  (if (= "x86_64-w64-mingw32-gcc" ((os/environ) "CC"))
+    (get-mingw-lflags)
+    []))
 
 (declare-native
  :name "com_ahungry_json"
- :cflags ["-std=c99" "-Wall" "-Wextra"]
- :lflags []
+ :cflags ["-std=c99" "-Wall" "-Wextra" (splice (get-cflags))]
+ :lflags [(splice (get-lflags))]
  :source @["src/json/json.c"])
 
 (declare-native
    :name "com_ahungry_meta"
-   :cflags ["-std=c99" "-Wall" "-Wextra"]
-   :lflags []
+   :cflags ["-std=c99" "-Wall" "-Wextra" (splice (get-cflags))]
+   :lflags [(splice (get-lflags)) ]
    :source @["src/meta.c"])
 
 (declare-native
    :name "com_ahungry_curl"
-   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC"]
-   :lflags ["-lcurl"]
+   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" (splice (get-cflags))]
+   :lflags ["-lcurl" (splice (get-lflags))]
    :source @["src/curl_wrap_app.c"])
 
 (declare-native
    :name "com_ahungry_sqlite3"
-   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC"]
-   :lflags ["-lsqlite3"]
+   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" (splice (get-cflags))]
+   :lflags ["-lsqlite3" (splice (get-lflags))]
    :source @["src/sqlite3/main.c"])
 
 (defn build-iup-linux []
@@ -69,33 +95,13 @@
   #(os/setenv "CC" "x86_64-w64-mingw32-gcc")
   (declare-native
    :name "com_ahungry_iup"
-   :cflags ["-std=c99"
-            "-Wall"
-            "-Wextra"
-            "-fPIC"
+   :cflags [
             "-I./deps/win/iup/include"
-            "-shared"
-            "-static"
-            "-D_WIN32_WINNT=0x0600"
-            (string/format "-I%s" ((os/environ) "JANET_AMALG_SOURCE_DIR"))
+            (splice (get-mingw-cflags))
             ]
-   :lflags ["-Wl,--out-implib,libiup_dll.a"
+   :lflags [
+            #"-Wl,--out-implib,libiup_dll.a"
             "-L./deps/win/iup"
-            "-L./deps/win/im"
-            "-lm"
-            "-pthread"
-            "-lwinmm"
-            "-lmswsock"
-            "-ladvapi32"
-            "-lmingw32"
-            "-lopengl32"
-            "-lpangowin32-1.0"
-            "-lgdi32"
-            "-lws2_32"
-            "-luuid"
-            "-lcomctl32"
-            "-lole32"
-            "-lcomdlg32"
             "-l:libiup.a"
             "-l:libiupim.a"
             "-l:libiup_scintilla.a"
@@ -113,11 +119,26 @@
             "-l:libiup.a"
             "-l:libiupimglib.a"
             "-l:libiupim.a"
-            "-L./build/win/im"
+            "-L./deps/win/im"
             "-l:libim.a"
             "-l:libz.a"
-            (string/format "-L%s" ((os/environ) "JANET_DLL_DIR"))
-            "-l:libjanet_dll.a"
+            "-lm"
+            "-pthread"
+            #"-L/usr/x86_64-w64-mingw32/lib"
+            "-lwinmm"
+            "-lws2_32"
+            "-lmswsock"
+            "-ladvapi32"
+            "-lmingw32"
+            "-lopengl32"
+            "-lpangowin32-1.0"
+            "-lgdi32"
+            "-luuid"
+            "-lcomctl32"
+            "-lole32"
+            "-lcomdlg32"
+            #"-lstdc++"
+            (splice (get-mingw-lflags))
             ]
    :source @["src/iup_wrap.c"]))
 
