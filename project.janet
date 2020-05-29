@@ -96,11 +96,14 @@
   (declare-native
    :name "com_ahungry_iup"
    :cflags [
+            "-mwindows"
             "-I./deps/win/iup/include"
             (splice (get-mingw-cflags))
             ]
    :lflags [
-            #"-Wl,--out-implib,libiup_dll.a"
+            "-Wl,--out-implib,libiup_dll.a"
+            #"-Wl,--export-all-symbols"
+            #"-Wl,--enable-auto-import"
             "-L./deps/win/iup"
             "-l:libiup.a"
             "-l:libiupim.a"
@@ -116,20 +119,20 @@
             "-l:libiup_plot.a"
             "-l:libiuptuio.a"
             "-l:libz.a"
-            "-l:libiup.a"
+            #"-l:libiup.a"
             "-l:libiupimglib.a"
-            "-l:libiupim.a"
+            #"-l:libiupim.a"
             "-L./deps/win/im"
             "-l:libim.a"
             "-l:libz.a"
             "-lm"
             "-pthread"
-            #"-L/usr/x86_64-w64-mingw32/lib"
             "-lwinmm"
             "-lws2_32"
             "-lmswsock"
             "-ladvapi32"
-            "-lmingw32"
+            #"-L/usr/x86_64-w64-mingw32/lib"
+            #"-l:libmingw32.a"
             "-lopengl32"
             "-lpangowin32-1.0"
             "-lgdi32"
@@ -137,10 +140,13 @@
             "-lcomctl32"
             "-lole32"
             "-lcomdlg32"
+            "-lmingw32"
+            #"-lwininet"
             #"-lstdc++"
             (splice (get-mingw-lflags))
             ]
-   :source @["src/iup_wrap.c"]))
+   # TODO: Figure out IUP as a dll - some notice is in this file down here
+   :source @["deps/win/iup/etc/iupstub.c" "src/iup_wrap.c"]))
 
 (defn build-iup-stub []
   (declare-native
