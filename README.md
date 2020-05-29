@@ -33,6 +33,18 @@ Network abstractions around curl and native janet net/ + servers TBD
 
 Wire protocols and serialization around JSON and YAML/TOML/JDN soon.
 
+# Samples
+
+Making a curl call to http bin:
+
+```clojure
+# This
+(pp (-> (net.client/http-get "http://httpbin.org/ip") json/decode))
+
+# Or this
+(pp (-> (net.client/json-get "http://httpbin.org/ip")))
+```
+
 # License
 
 All linked/included works that are not my own are subject to their
