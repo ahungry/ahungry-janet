@@ -5,7 +5,7 @@
 (defn make-dummy [f]
   (fn dummy [& xs]
     (printf
-     "com.ahungry.gui.iup/%s was called, but this not built with IUP support."
+     "com.ahungry.gui.iup/%s was called, but this not built with IUP support (hint: recompile with env IUP=linux or IUP=mingw)."
      (string f))))
 
 (defn make-bind [f]

@@ -61,6 +61,65 @@
             ]
    :source @["src/iup_wrap.c"]))
 
+(defn build-iup-mingw []
+  (pp "Not implemented yet"))
+
+(defn build-iup-mingw-wip []
+  # Make sure we have appropriate include/header files etc.
+  (or (and (os/stat "./deps/win/iup")
+           (os/stat "./deps/win/im"))
+      (os/shell "./get-iup-windows-files.sh"))
+  (os/setenv "CC" "x86_64-w64-mingw32-gcc")
+  (declare-native
+   :name "com_ahungry_iup"
+   :cflags ["-std=c99"
+            "-Wall"
+            "-Wextra"
+            "-fPIC"
+            "-I./deps/win/iup/include"
+            "-shared"
+            "-static"
+            "-D_WIN32_WINNT=0x0600"
+            ]
+   :lflags ["-Wl,--out-implib,libiup_dll.a"
+            "-L./deps/win/iup"
+            "-lm"
+            "-pthread"
+            "-lwinmm"
+            "-lmswsock"
+            "-ladvapi32"
+            "-lmingw32"
+            "-lopengl32"
+            "-lpangowin32-1.0"
+            "-lgdi32"
+            "-lws2_32"
+            "-luuid"
+            "-lcomctl32"
+            "-lole32"
+            "-lcomdlg32"
+            "-l:libiup.a"
+            "-l:libiupim.a"
+            "-l:libiup_scintilla.a"
+            "-l:libfreetype6.a"
+            "-l:libftgl.a"
+            "-l:libiupcd.a"
+            "-l:libiupcontrols.a"
+            "-l:libiupgl.a"
+            "-l:libiupglcontrols.a"
+            "-l:libiup_mglplot.a"
+            "-l:libiupole.a"
+            "-l:libiup_plot.a"
+            "-l:libiuptuio.a"
+            "-l:libz.a"
+            "-l:libiup.a"
+            "-l:libiupimglib.a"
+            "-l:libiupim.a"
+            "-L./build/win/im"
+            "-l:libim.a"
+            "-l:libz.a"
+            ]
+   :source @["src/iup_wrap.c"]))
+
 (defn build-iup-stub []
   (declare-native
    :name "com_ahungry_iup"
@@ -70,6 +129,7 @@
 
 (cond
   (= "linux" ((os/environ) "IUP")) (build-iup-linux)
+  (= "mingw" ((os/environ) "IUP")) (build-iup-mingw)
   :else (build-iup-stub))
 
 (declare-source :source @["lib/com.ahungry.janet"])

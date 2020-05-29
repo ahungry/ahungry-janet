@@ -3,8 +3,8 @@
 top=$(pwd)
 
 
-mkdir -p build/win/iup
-cd build/win/iup
+mkdir -p deps/win/iup
+cd deps/win/iup
 
 # Get the Windows files
 
@@ -17,8 +17,8 @@ unzip iup.zip
 
 cd $top
 
-mkdir -p build/win/im
-cd build/win/im
+mkdir -p deps/win/im
+cd deps/win/im
 
 #wget 'https://sourceforge.net/projects/imtoolkit/files/3.13/Windows%20Libraries/Dynamic/im-3.13_Win64_dllw6_lib.zip' -O im.zip
 wget 'https://github.com/ahungry/ahungry-janet/releases/download/0.0.1/im.zip' -O im.zip
