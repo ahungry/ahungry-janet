@@ -45,6 +45,19 @@ Making a curl call to http bin:
 (pp (-> (net.client/json-get "http://httpbin.org/ip")))
 ```
 
+Showing a GUI pop up:
+
+```clojure
+(import com.ahungry.gui.iup :as gui)
+
+(defn main [& xs]
+  (gui/init)
+  (gui/message "My first GUI" "Greetings from the GUI")
+  (gui/main-loop)
+  (gui/close))
+
+```
+
 # License
 
 All linked/included works that are not my own are subject to their
