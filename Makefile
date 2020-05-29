@@ -1,4 +1,4 @@
-all: build test
+all: build install test
 
 build:
 	jpm build

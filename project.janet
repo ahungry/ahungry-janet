@@ -17,6 +17,12 @@
  )
 
 (declare-native
+   :name "com_ahungry_json"
+   :cflags ["-std=c99" "-Wall" "-Wextra"]
+   :lflags []
+   :source @["src/json/json.c"])
+
+(declare-native
    :name "com_ahungry_meta"
    :cflags ["-std=c99" "-Wall" "-Wextra"]
    :lflags []
@@ -32,3 +38,5 @@
 (declare-source :source @["lib/com.ahungry.meta.janet"])
 (declare-source :source @["lib/com.ahungry.net.janet"])
 (declare-source :source @["lib/com.ahungry.net.client.janet"])
+(declare-source :source @["lib/com.ahungry.wire.janet"])
+(declare-source :source @["lib/com.ahungry.wire.json.janet"])

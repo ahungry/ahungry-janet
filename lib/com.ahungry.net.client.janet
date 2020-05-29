@@ -1,8 +1,8 @@
+(import com.ahungry.wire.json :as json)
+
 (use com_ahungry_curl)
 
-(def exports {:version "0.0.1"})
-
-(def json/decode identity)
+(def meta {:version "20200528"})
 
 (defn json-get
   "Make a `GET` JSON request to a remote endpoint."

@@ -3,7 +3,7 @@
 static Janet
 version_wrapped (int32_t argc, Janet *argv)
 {
-  JanetString s = janet_string ((uint8_t*)"0.0.1", 5);
+  JanetString s = janet_string ((uint8_t*)"20200528", 8);
 
   return janet_wrap_string (s);
 }
