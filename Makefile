@@ -1,13 +1,17 @@
+IUP?=none
+
 all: build install test
 
 build:
-	jpm build
+	jpm --com.ahungry.gui.iup=$(IUP) build
 
 install:
-	jpm install
+	jpm --com.ahungry.gui.iup=$(IUP) install
 
 clean:
-	jpm clean
+	-jpm clean
+	-jpm clear-cache
+	-jpm clear-manifest
 
 test:
 	jpm test
