@@ -16,6 +16,13 @@
  #   }]
  )
 
-(declare-source :source @["com.ahungry.janet"])
-(declare-source :source @["com.ahungry.net.janet"])
-(declare-source :source @["com.ahungry.net.client.janet"])
+(declare-native
+   :name "com_ahungry_meta"
+   :cflags ["-I./" "-std=c99" "-Wall" "-Wextra"]
+   :lflags []
+   :source @["src/meta.c"])
+
+(declare-source :source @["lib/com.ahungry.janet"])
+(declare-source :source @["lib/com.ahungry.meta.janet"])
+(declare-source :source @["lib/com.ahungry.net.janet"])
+(declare-source :source @["lib/com.ahungry.net.client.janet"])
