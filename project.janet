@@ -18,9 +18,15 @@
 
 (declare-native
    :name "com_ahungry_meta"
-   :cflags ["-I./" "-std=c99" "-Wall" "-Wextra"]
+   :cflags ["-std=c99" "-Wall" "-Wextra"]
    :lflags []
    :source @["src/meta.c"])
+
+(declare-native
+   :name "com_ahungry_curl"
+   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC"]
+   :lflags ["-lcurl"]
+   :source @["src/curl_wrap_app.c"])
 
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.meta.janet"])

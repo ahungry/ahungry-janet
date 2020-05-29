@@ -7,3 +7,5 @@
 (printf "com.ahungry.meta: %s"       (meta/exports       :version))
 (printf "com.ahungry.net: %s"        (net/exports        :version))
 (printf "com.ahungry.net.client: %s" (net.client/exports :version))
+
+(pp (net.client/http-get "http://httpbin.org/ip"))
