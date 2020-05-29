@@ -40,9 +40,27 @@
    :lflags ["-lsqlite3"]
    :source @["src/sqlite3/main.c"])
 
+# TODO: Maybe make this a conditional compile to ease installation in
+# non-GUI environments...
+(declare-native
+ :name "com_ahungry_iup"
+ :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" "-I./build/linux/iup/include"]
+ :lflags ["-L./build/linux/iup" "-l:libiup.a" "-l:libiupimglib.a"
+          "-l:libiupim.a" "-L./build/linux/im" "-l:libim.a" "-lpng16"
+          "-lstdc++" "-lX11"
+          # BEGIN Generated from pkg-config --libs gtk+-3.0
+          "-lgtk-3" "-lgdk-3" "-lz" "-lpangocairo-1.0" "-lpango-1.0"
+          "-lharfbuzz" "-latk-1.0" "-lcairo-gobject" "-lcairo" "-lgdk_pixbuf-2.0"
+          "-lgio-2.0" "-lgobject-2.0" "-lglib-2.0"
+          # END Generated from pkg-config
+          ]
+ :source @["src/iup_wrap.c"])
+
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.db.janet"])
 (declare-source :source @["lib/com.ahungry.db.sqlite.janet"])
+(declare-source :source @["lib/com.ahungry.gui.janet"])
+(declare-source :source @["lib/com.ahungry.gui.iup.janet"])
 (declare-source :source @["lib/com.ahungry.meta.janet"])
 (declare-source :source @["lib/com.ahungry.net.janet"])
 (declare-source :source @["lib/com.ahungry.net.client.janet"])
