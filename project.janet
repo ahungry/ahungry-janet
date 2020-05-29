@@ -16,11 +16,13 @@
  #   }]
  )
 
+(os/shell "./get-iup-linux-files.sh")
+
 (declare-native
-   :name "com_ahungry_json"
-   :cflags ["-std=c99" "-Wall" "-Wextra"]
-   :lflags []
-   :source @["src/json/json.c"])
+ :name "com_ahungry_json"
+ :cflags ["-std=c99" "-Wall" "-Wextra"]
+ :lflags []
+ :source @["src/json/json.c"])
 
 (declare-native
    :name "com_ahungry_meta"
