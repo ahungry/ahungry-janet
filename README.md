@@ -1,6 +1,15 @@
 # Ahungry Janet
 
-Ahungry Library for Janet
+Library of code to use with Janet and make it easier to quickly
+develop a variety of apps.
+
+If you need something more specific (a small GUI like Puny GUI, or
+perhaps a web framework like Joy) you can view options at
+https://github.com/ahungry/awesome-janet
+
+This set of files should be installable using the jpm (Janet Package
+manager) or can also be leveraged as a starting point for a new
+project by forking this repository.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
