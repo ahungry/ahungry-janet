@@ -6,6 +6,7 @@ Ahungry Library for Janet
 **Table of Contents**
 
 - [Ahungry Janet](#ahungry-janet)
+- [Installation](#installation)
 - [Features](#features)
     - [com.ahungry.db](#comahungrydb)
     - [com.ahungry.gui](#comahungrygui)
