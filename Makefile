@@ -16,6 +16,7 @@ package-linux:
 	make docker-get
 
 package-windows:
+	make ming
 	./package-windows.sh
 
 libjanet.so.1.9: libjanet.so
