@@ -1,19 +1,19 @@
 IUP?=none
 
-# Mingw related
-WINCC?=x86_64-w64-mingw32-gcc
-JANET_AMALG_SOURCE_DIR?=$(shell pwd)
-JANET_DLL_DIR?=$(shell pwd)
+CC=gcc
+CFLAGS=-Wall -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-format-truncation -std=gnu99 -fPIC
+LFLAGS=-lm -pthread -lz -ldl
 
 all: build install test
 
-build-ming:
-	$(shell JANET_AMALG_SOURCE_DIR=$(JANET_AMALG_SOURCE_DIR) \
-		JANET_DLL_DIR=$(JANET_DLL_DIR)\
-		CC=$(WINCC) make build-ming-helper)
+ming:
+	make -f Wakefile all
 
-build-ming-helper:
-	IUP=mingw jpm build
+package:
+	./package-windows.sh
+
+app.bin:
+	$(CC) $(CFLAGS) -I./amalg amalg/janet.c src/app.c -o $@ $(LFLAGS)
 
 build:
 	IUP=$(IUP) jpm build
