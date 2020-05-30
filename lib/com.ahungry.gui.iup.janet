@@ -12,12 +12,12 @@
   (try (eval f)
        ([err] (make-dummy f))))
 
-(def open (make-bind 'iup/IupOpen))
-(def int-ptr (make-bind 'iup/int-ptr))
-(def char-ptr (make-bind 'iup/char-ptr))
-(def close (make-bind 'iup/IupClose))
+(def open      (make-bind 'iup/IupOpen))
+(def int-ptr   (make-bind 'iup/int-ptr))
+(def char-ptr  (make-bind 'iup/char-ptr))
+(def close     (make-bind 'iup/IupClose))
 (def main-loop (make-bind 'iup/IupMainLoop))
-(def message (make-bind 'iup/IupMessage))
+(def message   (make-bind 'iup/IupMessage))
 
 (defn init []
   (open (int-ptr) (char-ptr)))
