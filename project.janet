@@ -25,12 +25,13 @@
    "-shared"
    #"-static"
    "-D_WIN32_WINNT=0x0600"
-   (string/format "-I%s" ((os/environ) "JANET_AMALG_SOURCE_DIR"))
+   "-I./amalg"
+   #(string/format "-I%s" ((os/environ) "JANET_AMALG_SOURCE_DIR"))
    ])
 
 (defn get-mingw-lflags []
   [
-   (string/format "-L%s" ((os/environ) "JANET_DLL_DIR"))
+   (string/format "-L%s" (or ((os/environ) "JANET_DLL_DIR") (os/cwd)))
    "-l:libjanet_dll.a"
    ])
 
@@ -145,8 +146,8 @@
             #"-lstdc++"
             (splice (get-mingw-lflags))
             ]
-   # TODO: Figure out IUP as a dll - some notice is in this file down here
-   :source @["deps/win/iup/etc/iupstub.c" "src/iup_wrap.c"]))
+   :source @["src/iup_wrap.c"])
+  (os/shell "cp build/com_ahungry_iup.so build/com_ahungry_iup.dll"))
 
 (defn build-iup-stub []
   (declare-native

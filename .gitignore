@@ -3,7 +3,6 @@
 *.db
 Thumbs.db*
 build/
-amalg/
 build.tar.gz
 *.zip
 *.tar.gz
