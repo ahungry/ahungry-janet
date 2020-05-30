@@ -33,7 +33,7 @@ WORKDIR /app
 
 RUN ./get-iup-linux-files.sh
 RUN make -Bj
-RUN make
+RUN make local-lib
 RUN ./package-linux.sh
 
 CMD echo

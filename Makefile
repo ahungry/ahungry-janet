@@ -20,10 +20,10 @@ app.bin:
 	$(CC) $(CFLAGS) -I./amalg src/app.c -o $@ $(LFLAGS) -ljanet
 
 build:
-	IUP=$(IUP) jpm build
+	-IUP=$(IUP) jpm build
 
 install:
-	IUP=$(IUP) jpm install
+	-IUP=$(IUP) jpm install
 
 clean:
 	-jpm clean
@@ -31,7 +31,7 @@ clean:
 	-jpm clear-manifest
 
 test:
-	jpm test
+	-jpm test
 
 docker-build:
 	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
