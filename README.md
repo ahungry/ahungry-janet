@@ -48,21 +48,47 @@ IUP=none to avoid having it install the IUP files.
 
 # Features
 
+## com.ahungry.conc
+
+Concurrency features (including pobox integration for Clojure like atoms)
+
+## com.ahungry.conc.atom
+
+Clojure like atoms for sharing state among Janet threads (usually
+restricted to message passing only).
+
 ## com.ahungry.db
 
 Database abstractions around sqlite3 and postgresql + mysql/mariadb soon.
 
+## com.ahungry.db.sqlite
+
+Integration of https://github.com/janet-lang/sqlite3 with some common
+abstractions to come.
+
 ## com.ahungry.gui
 
-GUI abstractions around IUP and possibly others (soon).
+Optionally installable GUI abstractions around IUP and possibly others (soon).
+
+## com.ahungry.gui.iup
+
+Features more Janet like abstractions over the C wrapper.
 
 ## com.ahungry.net
 
 Network abstractions around curl and native janet net/ + servers TBD
 
+## com.ahungry.net.client
+
+Full-featured HTTP(s) client backed by libcurl.
+
 ## com.ahungry.wire
 
 Wire protocols and serialization around JSON and YAML/TOML/JDN soon.
+
+## com.ahungry.wire.json
+
+Integration of https://github.com/janet-lang/json for JSON encoding/decoding.
 
 # Samples
 
