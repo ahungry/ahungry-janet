@@ -5,13 +5,21 @@ CC=gcc
 CFLAGS=-Wall -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-format-truncation -std=gnu99 -fPIC
 LFLAGS=-lm -pthread -lz -ldl
 
-all: build install test
+all: build install test app.bin
 
 ming:
 	make -f Wakefile all
 
-package:
+package-linux:
+	make docker-build
+	make docker-run
+	make docker-get
+
+package-windows:
 	./package-windows.sh
+
+libjanet.so.1.9: libjanet.so
+	ln -sfn libjanet.so $@
 
 libjanet.so:
 	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
@@ -37,10 +45,10 @@ docker-build:
 	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
 
 docker-get:
-	docker cp ahungry_janet_run:/app/ahungry-janet-linux64.tar.gz ./
+	docker cp ahungry_janet_run:/app/app-gnu-linux64.tar.gz ./
 
 docker-run:
-	$(info docker cp ahungry_janet:/app/ahungry-janet-linux64.tar.gz ./)
+	$(info docker cp ahungry_janet:/app/app-gnu-linux64.tar.gz ./)
 	-docker rm ahungry_janet_run
 	docker run --name ahungry_janet_run \
 	-it ahungry_janet_build
