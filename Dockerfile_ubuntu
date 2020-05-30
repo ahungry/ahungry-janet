@@ -27,7 +27,7 @@ WORKDIR /janet
 RUN make
 RUN make install
 
-RUN echo Clone 20200530
+RUN echo Clone 20200530b
 RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
 
 WORKDIR /app

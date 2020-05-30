@@ -24,7 +24,7 @@ libjanet.so.1.9: libjanet.so
 libjanet.so:
 	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
 
-app.bin:
+app.bin: libjanet.so.1.9
 	$(CC) $(CFLAGS) -I./amalg src/app.c -o $@ $(LFLAGS) -ljanet
 
 build:
