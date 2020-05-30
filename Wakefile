@@ -8,13 +8,13 @@ LFLAGS=-L. -ljanet
 IUP_CFLAGS=-DIUP_DLL -I./deps/win/iup/include
 IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -L/home/mcarter/software/iup/win64-dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
 
-all: build/com_ahungry_iup.dll build/com_ahungry_json.dll build/com_ahungry_meta.dll build/com_ahungry_curl.dll build/com_ahungry_sqlite3.dll janet.exe
+all: build/com_ahungry_iup.dll build/com_ahungry_json.dll build/com_ahungry_meta.dll build/com_ahungry_curl.dll build/com_ahungry_sqlite3.dll janet.exe local-lib
 
 janet.exe: libjanet.dll
 	$(CC) $(CFLAGS) amalg/shell.c -o janet.exe $(LFLAGS)
 
 build:
-	mkdir -p build/
+	mkdir -p build
 
 deps/win:
 	./get-iup-windows-files.sh
@@ -31,25 +31,39 @@ build/com_ahungry_meta.dll: src/meta.c libjanet.dll build
 
 build/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared src/curl_wrap_app.c -o $@ $(LFLAGS) -lcurl
+	./get-curl-dlls.sh
 
-build/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll build
+build/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll build libsqlite3-0.dll
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
+	./get-sqlite-dlls.sh
 
 libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll libstdc++-6.dll
 	$(CC) $(CFLAGS) -D_WIN32_WINNT=0x0600 -shared amalg/janet.c -o libjanet.dll -lm -pthread -lwinmm -lmswsock -lws2_32
 
 libwinpthread-1.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
-
 libgcc_s_seh-1.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
-
 libstdc++-6.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+libsqlite3-0.dll:
+	cp /usr/x86_64-w64-mingw32/bin/$@ ./
 
-# TODO: Use a dynamic janet path
-install:
+local-lib:
+	mkdir -p local-lib
+	cp build/*.dll ./local-lib/
+	cp -R lib/*.janet ./local-lib/
+
+install: local-lib
+
+global-install:
 	cp build/*.dll /usr/local/lib/janet/
+
+test:
+	wine janet.exe -m ./local-lib test/test.janet
 
 clean:
 	-rm -fr build/*.dll
+	-rm -fr local-lib/*
+
+.PHONY: test
