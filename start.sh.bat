@@ -2,7 +2,7 @@ echo \" <<'BATCH_SCRIPT' >/dev/null ">NUL "\" \`" <#"
 @ECHO OFF
 REM ===== Batch Script Begin =====
 ECHO Starting janet.exe via bat
-start "app" /max janet.exe -m ./local-lib app.janet
+start "app" /max janet.exe -m ./lib app.janet
 REM ====== Batch Script End ======
 GOTO :eof
 TYPE CON >NUL
@@ -22,8 +22,8 @@ POWERSHELL_SCRIPT
 
 set +o histexpand 2>/dev/null
 # ===== Bash Script Begin =====
-echo "Starting ./app.bin via sh"
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:. ./app.bin
+echo "Starting ./janet.bin via sh"
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:. ./janet.bin -m ./lib app.janet
 # ====== Bash Script End ======
 case $- in *"i"*) cat /dev/stdin >/dev/null ;; esac
 exit

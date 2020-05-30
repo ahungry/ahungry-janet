@@ -11,7 +11,6 @@ cp ./*.bin $dir/
 cp ./*.so* $dir/
 cp ./*.bat $dir/
 cp -R ./lib $dir/
-cp -R ./local-lib $dir/
 cp -R ./examples $dir/
 
 tar czvf $dir.tar.gz $dir

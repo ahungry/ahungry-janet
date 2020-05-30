@@ -5,7 +5,7 @@ CC=gcc
 CFLAGS=-Wall -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-format-truncation -std=gnu99 -fPIC
 LFLAGS=-lm -pthread -lz -ldl
 
-all: build install test app.bin
+all: build install test janet.bin
 
 ming:
 	make -f Wakefile all
@@ -24,11 +24,12 @@ libjanet.so.1.9: libjanet.so
 libjanet.so:
 	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
 
-app.bin: libjanet.so.1.9
-	$(CC) $(CFLAGS) -I./amalg src/app.c -o $@ $(LFLAGS) -ljanet
+janet.bin: libjanet.so.1.9
+	$(CC) $(CFLAGS) -I./amalg amalg/shell.c -o $@ $(LFLAGS) -ljanet
 
 build:
 	-IUP=$(IUP) jpm build
+	make local-lib
 
 install:
 	-IUP=$(IUP) jpm install
@@ -54,8 +55,6 @@ docker-run:
 	-it ahungry_janet_build
 
 local-lib:
-	mkdir -p local-lib
-	cp build/*.so ./local-lib/
-	cp lib/*.janet ./local-lib/
+	cp build/*.so ./lib/
 
 .PHONY: all test local-lib
