@@ -32,7 +32,7 @@ build/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll build
 build/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
 
-libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll
+libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll libstdc++-6.dll
 	$(CC) $(CFLAGS) -D_WIN32_WINNT=0x0600 -shared amalg/janet.c -o libjanet.dll -lm -pthread -lwinmm -lmswsock -lws2_32
 
 libwinpthread-1.dll:
