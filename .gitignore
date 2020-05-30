@@ -15,3 +15,4 @@ super-janet-app-linux64/
 /dog.jpg
 /deps/
 *.a
+*.so.*

@@ -12,8 +12,11 @@ ming:
 package:
 	./package-windows.sh
 
+libjanet.so:
+	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
+
 app.bin:
-	$(CC) $(CFLAGS) -I./amalg amalg/janet.c src/app.c -o $@ $(LFLAGS)
+	$(CC) $(CFLAGS) -I./amalg src/app.c -o $@ $(LFLAGS) -ljanet
 
 build:
 	IUP=$(IUP) jpm build

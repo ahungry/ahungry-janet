@@ -1,3 +1,8 @@
 (import com_ahungry_iup :as iup)
 
-(defn main [& xs] (pp "Hello"))
+(pp "Import success")
+
+(defn main [& xs]
+  (iup/IupOpen (iup/int-ptr) (iup/char-ptr))
+  (iup/IupMessage "hi " "there")
+  (iup/IupMainLoop))
