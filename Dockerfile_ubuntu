@@ -21,12 +21,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 RUN mkdir /app
 
 RUN echo Building off 1.9.0 Janet with fixed build script
+
+RUN git clone --depth=1 https://github.com/ahungry/janet /janet
+WORKDIR /janet
+RUN make
+RUN make install
+
 RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
 
 WORKDIR /app
 
 RUN ./get-iup-linux-files.sh
 RUN make -Bj
+RUN make
 RUN ./package-linux.sh
 
 CMD echo

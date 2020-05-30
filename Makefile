@@ -1,4 +1,5 @@
-IUP?=none
+# Set to IUP=none to skip iup stuff
+IUP?=linux
 
 CC=gcc
 CFLAGS=-Wall -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-format-truncation -std=gnu99 -fPIC
@@ -44,4 +45,9 @@ docker-run:
 	docker run --name ahungry_janet_run \
 	-it ahungry_janet_build
 
-.PHONY: all test
+local-lib:
+	mkdir -p local-lib
+	cp build/*.so ./local-lib/
+	cp lib/*.janet ./local-lib/
+
+.PHONY: all test local-lib

@@ -66,4 +66,4 @@ clean:
 	-rm -fr build/*.dll
 	-rm -fr local-lib/*
 
-.PHONY: test
+.PHONY: test local-lib
