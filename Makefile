@@ -32,4 +32,16 @@ clean:
 test:
 	jpm test
 
+docker-build:
+	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
+
+docker-get:
+	docker cp ahungry_janet_run:/app/ahungry-janet-linux64.tar.gz ./
+
+docker-run:
+	$(info docker cp ahungry_janet:/app/ahungry-janet-linux64.tar.gz ./)
+	-docker rm ahungry_janet_run
+	docker run --name ahungry_janet_run \
+	-it ahungry_janet_build
+
 .PHONY: all test

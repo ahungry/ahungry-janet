@@ -2,7 +2,7 @@
 
 top=$(pwd)
 
-if [[ ! -d deps/win/iup ]]; then
+if [ ! -d deps/win/iup ]; then
 
     mkdir -p deps/win/iup
     cd deps/win/iup
@@ -20,7 +20,7 @@ fi
 
 cd $top
 
-if [[ ! -d deps/win/im ]]; then
+if [ ! -d deps/win/im ]; then
 
     mkdir -p deps/win/im
     cd deps/win/im

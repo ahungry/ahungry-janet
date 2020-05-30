@@ -7,4 +7,5 @@ zip -r app-win64.zip \
     ./*.dll \
     ./*.exe \
     ./lib \
+    ./local-lib \
     ./examples

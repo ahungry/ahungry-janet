@@ -2,7 +2,7 @@
 
 top=$(pwd)
 
-if [[ ! -d deps/linux/iup ]]; then
+if [ ! -d deps/linux/iup ]; then
 
     # GNU/Linux files
     mkdir -p deps/linux/iup
@@ -17,7 +17,7 @@ fi
 
 cd $top
 
-if [[ ! -d deps/linux/im ]]; then
+if [ ! -d deps/linux/im ]; then
     mkdir -p deps/linux/im
     cd deps/linux/im
 

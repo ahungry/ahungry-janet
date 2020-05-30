@@ -17,3 +17,4 @@ super-janet-app-linux64/
 *.a
 *.so.*
 /local-lib/
+/app-gnu-linux64/
