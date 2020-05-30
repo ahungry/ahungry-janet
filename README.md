@@ -18,15 +18,15 @@ project by forking this repository.
 - [Installation](#installation)
 - [Features](#features)
     - [com.ahungry.conc](#comahungryconc)
-    - [com.ahungry.conc.atom](#comahungryconcatom)
+        - [com.ahungry.conc.atom](#comahungryconcatom)
     - [com.ahungry.db](#comahungrydb)
-    - [com.ahungry.db.sqlite](#comahungrydbsqlite)
+        - [com.ahungry.db.sqlite](#comahungrydbsqlite)
     - [com.ahungry.gui](#comahungrygui)
-    - [com.ahungry.gui.iup](#comahungryguiiup)
+        - [com.ahungry.gui.iup](#comahungryguiiup)
     - [com.ahungry.net](#comahungrynet)
-    - [com.ahungry.net.client](#comahungrynetclient)
+        - [com.ahungry.net.client](#comahungrynetclient)
     - [com.ahungry.wire](#comahungrywire)
-    - [com.ahungry.wire.json](#comahungrywirejson)
+        - [com.ahungry.wire.json](#comahungrywirejson)
 - [Samples](#samples)
 - [License](#license)
 
@@ -58,7 +58,7 @@ IUP=none to avoid having it install the IUP files.
 
 Concurrency features (including pobox integration for Clojure like atoms)
 
-## com.ahungry.conc.atom
+### com.ahungry.conc.atom
 
 Clojure like atoms for sharing state among Janet threads (usually
 restricted to message passing only).
@@ -67,7 +67,7 @@ restricted to message passing only).
 
 Database abstractions around sqlite3 and postgresql + mysql/mariadb soon.
 
-## com.ahungry.db.sqlite
+### com.ahungry.db.sqlite
 
 Integration of https://github.com/janet-lang/sqlite3 with some common
 abstractions to come.
@@ -76,7 +76,7 @@ abstractions to come.
 
 Optionally installable GUI abstractions around IUP and possibly others (soon).
 
-## com.ahungry.gui.iup
+### com.ahungry.gui.iup
 
 Features more Janet like abstractions over the C wrapper.
 
@@ -84,7 +84,7 @@ Features more Janet like abstractions over the C wrapper.
 
 Network abstractions around curl and native janet net/ + servers TBD
 
-## com.ahungry.net.client
+### com.ahungry.net.client
 
 Full-featured HTTP(s) client backed by libcurl.
 
@@ -92,7 +92,7 @@ Full-featured HTTP(s) client backed by libcurl.
 
 Wire protocols and serialization around JSON and YAML/TOML/JDN soon.
 
-## com.ahungry.wire.json
+### com.ahungry.wire.json
 
 Integration of https://github.com/janet-lang/json for JSON encoding/decoding.
 
