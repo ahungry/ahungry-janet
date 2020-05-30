@@ -16,23 +16,23 @@ janet.exe:
 build:
 	mkdir -p build/
 
-build/com_ahungry_iup.dll: src/iup_wrap.c libjanet_dll.a build
+build/com_ahungry_iup.dll: src/iup_wrap.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared $(IUP_CFLAGS) src/iup_wrap.c -o $@ $(LFLAGS) $(IUP_LFLAGS)
 
-build/com_ahungry_json.dll: src/json/json.c libjanet_dll.a build
+build/com_ahungry_json.dll: src/json/json.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared src/json/json.c -o $@ $(LFLAGS)
 
-build/com_ahungry_meta.dll: src/meta.c libjanet_dll.a build
+build/com_ahungry_meta.dll: src/meta.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared src/meta.c -o $@ $(LFLAGS)
 
-build/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet_dll.a build
+build/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared src/curl_wrap_app.c -o $@ $(LFLAGS) -lcurl
 
-build/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet_dll.a build
+build/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll build
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
 
-libjanet_dll.a: libwinpthread-1.dll libgcc_s_seh-1.dll
-	$(WINCC) $(CFLAGS) -shared amalg/janet.c -o libjanet.dll $(LFLAGS) -Wl,--out-implib,libjanet_dll.a
+libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll
+	$(WINCC) $(CFLAGS) -shared amalg/janet.c -o libjanet.dll $(LFLAGS)
 
 libwinpthread-1.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
