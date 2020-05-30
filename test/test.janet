@@ -1,7 +1,8 @@
 (import com.ahungry            :as ahungry    :fresh t)
+(import com.ahungry.conc.atom  :as atom       :fresh t)
 (import com.ahungry.db         :as db         :fresh t)
 (import com.ahungry.db.sqlite  :as sqlite     :fresh t)
-(import com.ahungry.gui        :as gui         :fresh t)
+(import com.ahungry.gui        :as gui        :fresh t)
 (import com.ahungry.gui.iup    :as iup        :fresh t)
 (import com.ahungry.meta       :as meta       :fresh t)
 (import com.ahungry.net        :as net        :fresh t)
@@ -10,6 +11,7 @@
 (import com.ahungry.wire.json  :as json       :fresh t)
 
 (printf "com.ahungry: %s"            (ahungry/meta    :version))
+(printf "com.ahungry.conc.atom: %s"  (atom/meta       :version))
 (printf "com.ahungry.db: %s"         (db/meta         :version))
 (printf "com.ahungry.db.sqlite: %s"  (sqlite/meta     :version))
 (printf "com.ahungry.gui: %s"        (gui/meta        :version))

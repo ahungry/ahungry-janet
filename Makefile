@@ -41,7 +41,7 @@ clean:
 	-jpm clear-manifest
 
 test:
-	-jpm test
+	janet -m ./lib test/test.janet
 
 docker-build:
 	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
@@ -58,4 +58,4 @@ docker-run:
 local-lib:
 	cp build/*.so ./lib/
 
-.PHONY: all test local-lib
+.PHONY: all test local-lib build

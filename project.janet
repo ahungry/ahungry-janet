@@ -161,7 +161,15 @@
   (= "mingw" ((os/environ) "IUP")) (build-iup-mingw)
   :else (build-iup-stub))
 
+(declare-native
+  :name "pobox"
+  :cflags ["-Wall" "-Wextra"]
+  :lflags ["-pthread"]
+  #:embedded @["pobox_lib.janet"]
+  :source @["src/pobox.c"])
+
 (declare-source :source @["lib/com.ahungry.janet"])
+(declare-source :source @["lib/com.ahungry.conc.atom.janet"])
 (declare-source :source @["lib/com.ahungry.db.janet"])
 (declare-source :source @["lib/com.ahungry.db.sqlite.janet"])
 (declare-source :source @["lib/com.ahungry.gui.janet"])
