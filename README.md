@@ -16,6 +16,26 @@ Ahungry Library for Janet
 
 <!-- markdown-toc end -->
 
+# Installation
+
+You can install as a janet dependency (only tested as such in
+GNU/Linux) by adding to your project.janet file as such:
+
+```clojure
+ :dependencies
+ [{:repo "https://github.com/ahungry/ahungry-janet.git"}]
+
+```
+
+and then running:
+
+```sh
+JANET_PATH=./deps IUP=linux jpm deps
+```
+
+Leave off JANET_PATH to install globally and/or leave IUP unset or
+IUP=none to avoid having it install the IUP files.
+
 # Features
 
 ## com.ahungry.db
