@@ -33,6 +33,8 @@
 (def text          (make-bind 'iup/IupText))
 (def user          (make-bind 'iup/IupUser))
 (def set-thunk     (make-bind 'iup/iup-set-thunk-callback))
+(def redraw        (make-bind 'iup/IupRedraw))
+(def update        (make-bind 'iup/IupUpdate))
 
 (def  KEY_UP     65362)
 (def  KEY_DOWN   65364)

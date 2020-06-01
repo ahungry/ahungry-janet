@@ -1,5 +1,13 @@
 (import com.ahungry.gui.iup :as gui)
 
+# Unlike the Text listener, this will always return
+# a proper value no matter what is held (alt, ctrl, etc.)
+(defn bind-keys [el]
+  (gui/set-thunk el "K_ANY"
+                 (fn [self k]
+                   (pp "Received a key from listener")
+                   (pp k))))
+
 (defn main [& xs]
   (gui/init)
   (def label (gui/label "Some label here"))
@@ -45,6 +53,7 @@
                    (gui/set-attr "SELECTION" "3,1:3,20")))
   (gui/set-attr-handle-s text "ADDFORMATTAG_HANDLE" format2)
   (gui/append vbox text)
+  (bind-keys vbox)
   (gui/show-xy dialog (gui/CENTER) (gui/CENTER))
   (gui/main-loop)
   (gui/close))
