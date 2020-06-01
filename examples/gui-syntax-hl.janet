@@ -9,19 +9,23 @@
         (gui/set-attr "TITLE" "Greetings")
         (gui/set-attr "SIZE" "600x300")))
   (def button (gui/button "Close" "NULL"))
-  (gui/onclick button (fn [self n]
+  (gui/set-action button (fn [self n]
                         (pp "Button clicked")
                         (gui/CLOSE)))
   (gui/append vbox button)
   (def text (gui/set-attrs (gui/text "NULL")
                            {:multiline :yes
                             :expand :yes
-                              :formatting "YES"
+                            :formatting "YES"
                             :linespacing "DOUBLE"
                             #:bgcolor "10 10 20"
                             #:fgcolor "55 135 255"
-                              :font "MONOSPACE"
-                            }))
+                            :font "MONOSPACE"}))
+  (gui/set-action text (fn [self x]
+                         (pp "Text input ascii was")
+                         (pp x)
+                         (gui/set-attr self "VALUE" "Something in cb")
+                         (gui/IGNORE)))
   (gui/set-attr text "VALUE"
                 (-> (slurp "examples/gui-syntax-hl.janet") string))
   # https://webserver2.tecgraf.puc-rio.br/iup/en/attrib/iup_formatting.html

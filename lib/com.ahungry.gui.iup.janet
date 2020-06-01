@@ -12,6 +12,9 @@
   (try (eval f)
        ([err] (make-dummy f))))
 
+(def CENTER        (make-bind 'iup/const-IUP-CENTER))
+(def CLOSE         (make-bind 'iup/const-IUP-CLOSE))
+(def IGNORE        (make-bind 'iup/const-IUP-IGNORE))
 (def open          (make-bind 'iup/IupOpen))
 (def int-ptr       (make-bind 'iup/int-ptr))
 (def char-ptr      (make-bind 'iup/char-ptr))
@@ -22,8 +25,6 @@
 (def set-handle    (make-bind 'iup/IupSetAttributeHandle))
 (def set-handle-s  (make-bind 'iup/IupSetAttributeHandleAsString))
 (def show-xy       (make-bind 'iup/IupShowXY))
-(def CENTER        (make-bind 'iup/const-IUP-CENTER))
-(def CLOSE         (make-bind 'iup/const-IUP-CLOSE))
 (def append        (make-bind 'iup/IupAppend))
 (def vbox          (make-bind 'iup/IupVbox))
 (def dialog        (make-bind 'iup/IupDialog))
@@ -70,5 +71,5 @@
 (defn init []
   (open (int-ptr) (char-ptr)))
 
-(defn onclick [el f]
+(defn set-action [el f]
   (set-thunk el "ACTION" f))

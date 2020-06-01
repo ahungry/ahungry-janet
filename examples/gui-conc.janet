@@ -20,7 +20,7 @@
                (gui/set-attr "TITLE" "Greetings")
                (gui/set-attr "SIZE" "600x300")))
          (def button (gui/button "Close" "NULL"))
-         (gui/onclick button (fn [self n]
+         (gui/set-action button (fn [self n]
                                (pp "Button clicked")
                                (gui/close)
                                (gui/CLOSE)))
