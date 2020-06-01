@@ -2,10 +2,9 @@
 
 rm app-win64.zip
 
-zip -r app-win64.zip \
+zip --exclude '*.so' -r app-win64.zip \
     ./*.janet \
     ./*.dll \
     ./*.exe \
     ./lib \
-    ./local-lib \
     ./examples

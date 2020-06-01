@@ -13,4 +13,4 @@ cp ./*.bat $dir/
 cp -R ./lib $dir/
 cp -R ./examples $dir/
 
-tar czvf $dir.tar.gz $dir
+tar -czv --exclude='*.dll' -f $dir.tar.gz $dir
