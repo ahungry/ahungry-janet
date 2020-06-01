@@ -17,6 +17,12 @@ deps/win:
 	./get-iup-windows-files.sh
 	./get-dlls.sh
 
+lib/com_ahungry_cairo.dll: src/cairo_wrap.c  libjanet.dll libcairo-2.dll
+	$(CC) $(CFLAGS) \
+	-I/usr/x86_64-w64-mingw32/include/cairo \
+	-shared src/cairo_wrap.c -o $@ $(LFLAGS) \
+	-lcairo
+
 lib/com_ahungry_webview.dll: src/webview/webview.c  libjanet.dll
 	$(CC) $(CFLAGS) -shared -DWEBVIEW_WINAPI src/webview/webview.c -o $@ $(LFLAGS) \
 	-lz -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 \
@@ -49,6 +55,8 @@ libgcc_s_seh-1.dll:
 libstdc++-6.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
 libsqlite3-0.dll:
+	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+libcairo-2.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
 
 global-install:
