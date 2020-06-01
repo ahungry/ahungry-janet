@@ -32,7 +32,10 @@
   (gui/set-action text (fn [self x]
                          (pp "Text input ascii was")
                          (pp x)
-                         (gui/set-attr self "VALUE" "Something in cb")
+                         # Not sure we can dynamically append elements
+                         # But we can make virtual areas maybe...
+                         (pp (gui/get-attr-s dialog "SIZE"))
+                         #(gui/set-attr self "VALUE" "Something in cb")
                          (gui/IGNORE)))
   (gui/set-attr text "VALUE"
                 (-> (slurp "examples/gui-syntax-hl.janet") string))
