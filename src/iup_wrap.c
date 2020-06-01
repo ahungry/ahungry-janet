@@ -321,6 +321,20 @@ IupGetAttributeAsString_wrapped (int32_t argc, Janet *argv)
 
   return janet_wrap_string (s);
 }
+
+static Janet
+IupSetAttributeHandleAsString_wrapped (int32_t argc, Janet *argv)
+{
+  janet_fixarity (argc, 3);
+
+  Ihandle * arg_0 = (Ihandle *) janet_getpointer (argv, 0);
+  char const * arg_1 = (char const *) janet_getstring (argv, 1);
+  Ihandle * arg_2 = (Ihandle *) janet_getpointer (argv, 2);
+
+  IupSetAttribute ((Ihandle *) arg_0, (char const *) arg_1, (char *) arg_2);
+
+  return janet_wrap_nil ();
+}
 // END Non-Swig hand generation stuff
 
 
@@ -4618,6 +4632,9 @@ static const JanetReg
 iup_cfuns[] = {
   {
     "iup-set-thunk-callback", IupSetThunkCallback_wrapped, ""
+  },
+  {
+    "IupSetAttributeHandleAsString", IupSetAttributeHandleAsString_wrapped, ""
   },
   {
     "IupGetAttributeAsString", IupGetAttributeAsString_wrapped, ""

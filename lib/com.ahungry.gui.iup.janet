@@ -20,6 +20,7 @@
 (def message       (make-bind 'iup/IupMessage))
 (def set-attribute (make-bind 'iup/IupSetAttribute))
 (def set-handle    (make-bind 'iup/IupSetAttributeHandle))
+(def set-handle-s  (make-bind 'iup/IupSetAttributeHandleAsString))
 (def show-xy       (make-bind 'iup/IupShowXY))
 (def CENTER        (make-bind 'iup/const-IUP-CENTER))
 (def CLOSE         (make-bind 'iup/const-IUP-CLOSE))
@@ -28,6 +29,8 @@
 (def dialog        (make-bind 'iup/IupDialog))
 (def label         (make-bind 'iup/IupLabel))
 (def button        (make-bind 'iup/IupButton))
+(def text          (make-bind 'iup/IupText))
+(def user          (make-bind 'iup/IupUser))
 (def set-thunk     (make-bind 'iup/iup-set-thunk-callback))
 
 (def  KEY_UP     65362)
@@ -47,8 +50,22 @@
 (defn set-attr-handle [x k v]
   (set-handle x k v) x)
 
+(defn set-attr-handle-s [x k v]
+  (set-handle-s x k v) x)
+
 (defn set-label [label s]
   (set-attr label "TITLE" s) label)
+
+(defn kw->upper [k]
+  (if (keyword? k)
+      (string/ascii-upper (string k))
+    k))
+
+(defn set-attrs [ih m]
+  (map (fn [k]
+         (set-attr ih (kw->upper k) (kw->upper (get m k))))
+       (keys m))
+  ih)
 
 (defn init []
   (open (int-ptr) (char-ptr)))
