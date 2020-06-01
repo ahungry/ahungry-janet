@@ -17,6 +17,12 @@ deps/win:
 	./get-iup-windows-files.sh
 	./get-dlls.sh
 
+lib/com_ahungry_webview.dll: src/webview/webview.c  libjanet.dll
+	$(CC) $(CFLAGS) -shared -DWEBVIEW_WINAPI src/webview/webview.c -o $@ $(LFLAGS) \
+	-lz -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 \
+	-lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32 \
+	-lole32 -lcomctl32 -loleaut32 -luuid
+
 lib/com_ahungry_iup.dll: src/iup_wrap.c libjanet.dll deps/win
 	$(CC) $(CFLAGS) -shared $(IUP_CFLAGS) src/iup_wrap.c -o $@ $(LFLAGS) $(IUP_LFLAGS)
 
