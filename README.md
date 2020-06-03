@@ -1,15 +1,17 @@
 # Ahungry Janet
 
-Library of code to use with Janet and make it easier to quickly
-develop a variety of apps.
+Cross platform tested library of code to use with Janet and make it
+easier to quickly develop a variety of apps.
 
 If you need something more specific (a small GUI like Puny GUI, or
 perhaps a web framework like Joy) you can view options at
 https://github.com/ahungry/awesome-janet
 
 This set of files should be installable using the jpm (Janet Package
-manager) or can also be leveraged as a starting point for a new
-project by forking this repository.
+manager) on GNU/Linux, or can also be leveraged as a starting point
+for a new project by forking this repository (perhaps easier if
+targetting Windows, as the mingw building goes through make, not jpm
+at the moment).
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -34,6 +36,25 @@ project by forking this repository.
 - [License](#license)
 
 <!-- markdown-toc end -->
+
+# Why?
+
+As I come across useful Janet packages, I'd like to keep them
+centralized and more clearly organized (I think the javaesque naming
+convention is better here - I'd rather search for
+com.ahungry.net.tcp.client rather than blazbluzster when in need of an
+HTTP client library), so I don't have to hunt down the same couple
+packages I use over and over as I make new projects.
+
+However, this goes beyond a simple aggregation repository of other
+packages - I am "snapshotting" the dependencies as part of this
+repository, to avoid playing catch-up in perpetuity, and having a
+scattered coupling of community packages.
+
+Obviously this has the potential to mean certain packages become out
+of date over time, but I'd rather pull those changes in manually
+(refreshing the incorporated code) after I have tested it, rather than
+having code updated opaquely from under me.
 
 # Installation
 
@@ -66,6 +87,8 @@ Concurrency features (including pobox integration for Clojure like atoms)
 Clojure like atoms for sharing state among Janet threads (usually
 restricted to message passing only).
 
+Incorporated from: https://github.com/ahungry/janet-pobox
+
 ## com.ahungry.db
 
 Database abstractions around sqlite3 and postgresql + mysql/mariadb soon.
@@ -74,6 +97,8 @@ Database abstractions around sqlite3 and postgresql + mysql/mariadb soon.
 
 Integration of https://github.com/janet-lang/sqlite3 with some common
 abstractions to come.
+
+Incorporated from: https://github.com/janet-lang/sqlite3
 
 ## com.ahungry.gui
 
@@ -88,6 +113,8 @@ Features more Janet like abstractions over the C wrapper.
 Embedded webview to run an Electron like app (or whatever else is
 useful for a local web browser).  Challenging at the moment to build a
 web browser out of it, as it lacks the IUP gui features...
+
+Incorporated from: https://github.com/janet-lang/webview
 
 ## com.ahungry.net
 
@@ -118,6 +145,8 @@ Wire protocols and serialization around JSON and YAML/TOML/JDN soon.
 ### com.ahungry.wire.json
 
 Integration of https://github.com/janet-lang/json for JSON encoding/decoding.
+
+Incorporated from: https://github.com/janet-lang/json
 
 # Samples
 
