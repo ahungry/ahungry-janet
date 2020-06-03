@@ -1,14 +1,31 @@
+#include <errno.h>
 #include <janet.h>
+#include <string.h>
+
+#ifdef _WIN32
+// For windows
+#include <winsock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+#include <iphlpapi.h>
+
+// Taken from posix/wait.h
+#define WNOHANG          0x00000001
+
+// Taken from unistd.h
+#define SHUT_RDWR 0x02
+
+#else
 
 #include <arpa/inet.h>  /* IP address conversion stuff */
 #include <ctype.h>
-#include <errno.h>
 #include <netdb.h>      /* gethostbyname */
 #include <netinet/in.h> /* INET constants and stuff */
-#include <string.h>
 #include <sys/socket.h> /* socket specific definitions */
 #include <sys/types.h>
 #include <unistd.h>
+
+#endif
 
 #define MAXBUF 1024 * 1024
 
@@ -27,6 +44,52 @@ die (const char *s)
   exit (1);
 }
 
+#ifdef _WIN32
+
+WSADATA wsaData;
+
+int
+get_socket_fd (struct addrinfo** return_res, char *hostname, int port)
+{
+  char portname[10];
+  snprintf (portname, sizeof (portname), "%d", port);
+  int iResult;
+
+  // Initialize Winsock
+  iResult = WSAStartup (MAKEWORD (2,2), &wsaData);
+
+  if (iResult != 0)
+    {
+      fprintf (stderr, "WSAStartup failed: %d\n", iResult);
+      return 1;
+    }
+
+  struct addrinfo *res = NULL, *ptr = NULL, hints;
+
+  ZeroMemory (&hints, sizeof (hints));
+
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_DGRAM;
+  hints.ai_protocol = 0;
+  hints.ai_flags = 0;
+
+  iResult = getaddrinfo (hostname, portname, &hints, &res);
+
+  if (iResult != 0)
+    {
+      fprintf (stderr, "getaddrinfo failed: %d\n", iResult);
+      WSACleanup ();
+
+      return 1;
+    }
+
+  int fd = socket (res->ai_family, res->ai_socktype, res->ai_protocol);
+
+  *return_res = res;
+
+  return fd;
+}
+#else
 // How to prevent socket from failing on getaddrinfo resolution?
 // https://stackoverflow.com/questions/2597608/c-socket-connection-timeout
 int
@@ -59,6 +122,7 @@ get_socket_fd (struct addrinfo** return_res, char *hostname, int port)
 
   return fd;
 }
+#endif
 
 // Fire and forget some udp (we don't get anything back)
 void
@@ -122,6 +186,9 @@ udp_listen (int listen_port)
   skaddr.sin_family = AF_INET;
   skaddr.sin_addr.s_addr = htonl(INADDR_ANY);
   skaddr.sin_port = htons(listen_port); // 0 for the kernel to choose random
+
+  int enable = 1;
+  setsockopt (ld, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof (int));
 
   if (bind(ld, (struct sockaddr *) &skaddr, sizeof(skaddr))<0) {
     printf("Problem binding\n");

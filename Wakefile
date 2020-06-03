@@ -17,6 +17,10 @@ deps/win:
 	./get-iup-windows-files.sh
 	./get-dlls.sh
 
+lib/com_ahungry_udp.dll: src/udp.c libjanet.dll
+	$(CC) -I/usr/x86_64-w64-mingw32/include $(CFLAGS) \
+	-shared src/udp.c -o $@ $(LFLAGS) -lws2_32 -lwsock32 -lwinpthread
+
 lib/com_ahungry_cairo.dll: src/cairo_wrap.c  libjanet.dll libcairo-2.dll
 	$(CC) $(CFLAGS) \
 	-I/usr/x86_64-w64-mingw32/include/cairo \
