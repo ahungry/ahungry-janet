@@ -17,6 +17,7 @@ at the moment).
 **Table of Contents**
 
 - [Ahungry Janet](#ahungry-janet)
+- [Why?](#why)
 - [Installation](#installation)
 - [Features](#features)
     - [com.ahungry.conc](#comahungryconc)
