@@ -7,4 +7,5 @@
   (while true
     (set n (inc n))
     (pp n)
-    (udp/listen 12345)))
+    (pp
+     (udp/listen 12345))))
