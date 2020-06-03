@@ -37,6 +37,7 @@
 (def set-thunk     (make-bind 'iup/iup-set-thunk-callback))
 (def redraw        (make-bind 'iup/IupRedraw))
 (def update        (make-bind 'iup/IupUpdate))
+(def list          (make-bind 'iup/IupList))
 
 (def  KEY_UP     65362)
 (def  KEY_DOWN   65364)
