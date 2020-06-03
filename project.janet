@@ -228,3 +228,9 @@
            "-I/usr/include/harfbuzz"]
   :lflags ["-lm" "-ldl" "-lpthread" "-lcairo"]
   :source @["src/cairo_wrap.c"])
+
+(declare-native
+ :name "com_ahungry_udp"
+ :cflags ["-std=gnu99" "-Wall" "-Wextra"]
+ :lflags ["-lm" "-ldl" "-lpthread"]
+ :source @["src/udp.c"])
