@@ -7,4 +7,5 @@ zip --exclude '*.so' -r app-win64.zip \
     ./*.dll \
     ./*.exe \
     ./lib \
+    ./*.bat \
     ./examples
