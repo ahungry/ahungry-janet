@@ -23,8 +23,11 @@ project by forking this repository.
         - [com.ahungry.db.sqlite](#comahungrydbsqlite)
     - [com.ahungry.gui](#comahungrygui)
         - [com.ahungry.gui.iup](#comahungryguiiup)
+        - [com.ahungry.gui.webview](#comahungryguiwebview)
     - [com.ahungry.net](#comahungrynet)
-        - [com.ahungry.net.client](#comahungrynetclient)
+        - [com.ahungry.net.tcp.client](#comahungrynettcpclient)
+        - [com.ahungry.net.udp.client](#comahungrynetudpclient)
+        - [com.ahungry.net.udp.server](#comahungrynetudpserver)
     - [com.ahungry.wire](#comahungrywire)
         - [com.ahungry.wire.json](#comahungrywirejson)
 - [Samples](#samples)
@@ -80,13 +83,33 @@ Optionally installable GUI abstractions around IUP and possibly others (soon).
 
 Features more Janet like abstractions over the C wrapper.
 
+### com.ahungry.gui.webview
+
+Embedded webview to run an Electron like app (or whatever else is
+useful for a local web browser).  Challenging at the moment to build a
+web browser out of it, as it lacks the IUP gui features...
+
 ## com.ahungry.net
 
 Network abstractions around curl and native janet net/ + servers TBD
 
-### com.ahungry.net.client
+### com.ahungry.net.tcp.client
 
 Full-featured HTTP(s) client backed by libcurl.
+
+### com.ahungry.net.udp.client
+
+Useful to send strings over UDP for IPC.
+
+### com.ahungry.net.udp.server
+
+Useful to receive strings over UDP for IPC.
+
+At the moment does not provide a way to send back to the sender like a
+web server - the UDP should be directional in a way that receives
+incoming messages in one way, and sends outgoing in another, without
+any direct coupling between the two, or where the message came from
+(fire and forget).
 
 ## com.ahungry.wire
 
@@ -101,7 +124,7 @@ Integration of https://github.com/janet-lang/json for JSON encoding/decoding.
 Making a curl call to http bin:
 
 ```clojure
-(import com.ahungry.net.client :as net.client)
+(import com.ahungry.net.tcp.client :as net.client)
 
 # This
 (pp (-> (net.client/http-get "http://httpbin.org/ip") json/decode))
