@@ -2,7 +2,7 @@ echo \" <<'BATCH_SCRIPT' >/dev/null ">NUL "\" \`" <#"
 @ECHO OFF
 REM ===== Batch Script Begin =====
 ECHO Starting janet.exe via bat
-start "app" /max janet.exe -m ./lib app.janet
+start "app" /max janet.exe -m ./lib examples/app.janet
 REM ====== Batch Script End ======
 GOTO :eof
 TYPE CON >NUL
