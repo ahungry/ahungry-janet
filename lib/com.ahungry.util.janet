@@ -21,14 +21,17 @@
     :take (fn [self n]
             (:reset self)
             (:-take self n))
+    :take-all (fn [self] (:take self math/inf))
     :iter (fn [self]
             (def next-val ((self :f) (self :last)))
             (if ((self :g) next-val)
-              (put self :stop? true)
+              (do
+                (put self :stop? true)
+                (self :last))
               (do
                 (put self :applications (inc (self :applications)))
-                (put self :last next-val)))
-            next-val)
+                (put self :last next-val)
+                next-val)))
    })
 
 (defn make-lazy
@@ -39,8 +42,8 @@
 (defn lazy-range [n]
   (make-lazy inc |(>= $ n) 0))
 
-(def test1 (lazy-range 1e6))
+(def test1 (lazy-range 10))
 
 (:iter test1)
 
-(:take test1 100)
+(:take-all test1 )
