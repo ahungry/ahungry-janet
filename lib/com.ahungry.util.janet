@@ -1,3 +1,4 @@
+# This is sort of a scratch file that has snuck in here...
 (def Lazy
   @{:g (fn [] nil)
     :f (fn [] nil)
@@ -58,3 +59,39 @@
 # (:take-all test1)
 # (:reduce (lazy-range 10) + 1)
 # (:map test1 (fn [n] (+ 1 n)))
+
+# Sample thing to read one line at a time
+(defn lazy-reader [filename]
+  (make-lazy
+   (fn [{:last-bytes last-bytes :bytes bytes :fh fh}]
+     (def s (file/read fh :line))
+     {:last-bytes bytes :bytes (+ bytes (length (or s ""))) :s s :fh fh})
+   (fn [{:last-bytes last-bytes :bytes bytes :fh fh :s s}]
+     (when (and (>= bytes ((os/stat filename) :size))
+                (= last-bytes bytes))
+       (file/close fh)
+       true))
+   (fn [] {:last-bytes 0 :bytes 0 :s "" :fh (file/open filename :r)})))
+
+
+(def this-file (lazy-reader "/etc/passwd"))
+
+(:map this-file |(get $ :bytes))
+(:map this-file |(get $ :s))
+
+(:iter this-file)
+(:take-all this-file)
+
+(defn while-lines [filename]
+  (def fh (file/open filename :r))
+  (while (def s (file/read fh :line))
+    (pp s))
+  (file/close fh))
+
+(while-lines "/etc/passwd")
+
+(defn lazy-simple [f g init]
+  (var next init)
+  (while (def produced (g next)) (pp next) (set next (f next))))
+
+(lazy-simple inc |(> 10 $) 0)
