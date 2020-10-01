@@ -33,7 +33,7 @@ RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
 WORKDIR /app
 
 RUN ./get-iup-linux-files.sh
-RUN make all
+RUN make all IUP=linux
 RUN make local-lib
 RUN make janet.bin
 COPY package-linux.sh /app/

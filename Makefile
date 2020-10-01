@@ -14,19 +14,20 @@ package-linux:
 	make docker-build
 	make docker-run
 	make docker-get
+	ls -l app-gnu-linux64.tar.gz
 
 package-windows:
 	make ming
 	./package-windows.sh
 
-libjanet.so.1.9: libjanet.so
+libjanet.so.1.12: libjanet.so
 	ln -sfn libjanet.so $@
 
 libjanet.so:
 	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
 
-janet.bin: libjanet.so.1.9
-	$(CC) $(CFLAGS) -I./amalg amalg/shell.c -o $@ $(LFLAGS) -ljanet
+janet.bin: libjanet.so.1.12
+	$(CC) $(CFLAGS) -I./amalg amalg/shell.c -o $@ $(LFLAGS) -l:./libjanet.so.1.12
 
 build:
 	-IUP=$(IUP) jpm build
