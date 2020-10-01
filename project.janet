@@ -69,6 +69,12 @@
    :lflags ["-lsqlite3" (splice (get-lflags))]
    :source @["src/sqlite3/main.c"])
 
+(declare-native
+   :name "_pq"
+   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" (splice (get-cflags))]
+   :lflags ["-lpq" (splice (get-lflags))]
+   :source @["src/janet-pq/pq.c"])
+
 (defn build-iup-linux []
   # Make sure we have appropriate include/header files etc.
   (or (and (os/stat "./deps/linux/iup")
@@ -168,6 +174,10 @@
   #:embedded @["pobox_lib.janet"]
   :source @["src/pobox.c"])
 
+# Copies from other projects
+(declare-source :source ["lib/pq.janet"])
+
+# Original wrappers
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.conc.atom.janet"])
 (declare-source :source @["lib/com.ahungry.db.janet"])

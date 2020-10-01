@@ -2,6 +2,7 @@
 (import com.ahungry.conc.atom      :as atom       :fresh t)
 (import com.ahungry.db             :as db         :fresh t)
 (import com.ahungry.db.sqlite      :as sqlite     :fresh t)
+(import com.ahungry.db.pgsql       :as pgsql      :fresh t)
 (import com.ahungry.gui            :as gui        :fresh t)
 (import com.ahungry.gui.iup        :as iup        :fresh t)
 (import com.ahungry.meta           :as meta       :fresh t)
@@ -14,6 +15,7 @@
 (printf "com.ahungry.conc.atom: %s"       (atom/meta       :version))
 (printf "com.ahungry.db: %s"              (db/meta         :version))
 (printf "com.ahungry.db.sqlite: %s"       (sqlite/meta     :version))
+(printf "com.ahungry.db.pgsql: %s"        (pgsql/meta      :version))
 (printf "com.ahungry.gui: %s"             (gui/meta        :version))
 (printf "com.ahungry.gui.iup: %s"         (iup/meta        :version))
 (printf "com.ahungry.meta: %s"            (meta/meta       :version))
@@ -22,8 +24,8 @@
 (printf "com.ahungry.wire: %s"            (wire/meta       :version))
 (printf "com.ahungry.wire.json: %s"       (json/meta       :version))
 
-(pp (-> (net.client/http-get "http://httpbin.org/ip") json/decode))
-(pp (-> (net.client/json-get "http://httpbin.org/ip")))
+(pp (-> (tcp.client/http-get "http://httpbin.org/ip") json/decode))
+(pp (-> (tcp.client/json-get "http://httpbin.org/ip")))
 
 (pp sqlite/open)
 (pp iup/main-loop)
