@@ -127,6 +127,12 @@ extern "C" {
 #define JANET_LITTLE_ENDIAN 1
 #endif
 
+/* Limits for converting doubles to 64 bit integers */
+#define JANET_INTMAX_DOUBLE 9007199254740992.0
+#define JANET_INTMIN_DOUBLE (-9007199254740992.0)
+#define JANET_INTMAX_INT64 9007199254740992
+#define JANET_INTMIN_INT64 (-9007199254740992)
+
 /* Check emscripten */
 #ifdef __EMSCRIPTEN__
 #define JANET_NO_DYNAMIC_MODULES
@@ -136,11 +142,6 @@ extern "C" {
 /* Check sun */
 #ifdef __sun
 #define JANET_NO_UTC_MKTIME
-#endif
-
-/* Add some windows flags */
-#ifdef JANET_WINDOWS
-#define JANET_NO_REALPATH
 #endif
 
 /* Define how global janet state is declared */
@@ -200,7 +201,7 @@ extern "C" {
 #ifdef JANET_WINDOWS
 #define JANET_NO_RETURN __declspec(noreturn)
 #else
-#define JANET_NO_RETURN __attribute__ ((noreturn))
+#define JANET_NO_RETURN __attribute__((noreturn))
 #endif
 #endif
 
@@ -224,6 +225,11 @@ extern "C" {
  * To turn of nanboxing, for debugging purposes or for certain
  * architectures (Nanboxing only tested on x86 and x64), comment out
  * the JANET_NANBOX define.*/
+
+#if defined(_M_ARM64) || defined(_M_ARM) || defined(__aarch64__)
+#define JANET_NO_NANBOX
+#endif
+
 #ifndef JANET_NO_NANBOX
 #ifdef JANET_32
 #define JANET_NANBOX_32
@@ -261,11 +267,22 @@ typedef struct {
 } JanetBuildConfig;
 
 /* Get config of current compilation unit. */
+#ifdef __cplusplus
+/* C++11 syntax */
+#define janet_config_current() (JanetBuildConfig { \
+    JANET_VERSION_MAJOR, \
+    JANET_VERSION_MINOR, \
+    JANET_VERSION_PATCH, \
+    JANET_CURRENT_CONFIG_BITS })
+#else
+/* C99 syntax */
 #define janet_config_current() ((JanetBuildConfig){ \
     JANET_VERSION_MAJOR, \
     JANET_VERSION_MINOR, \
     JANET_VERSION_PATCH, \
     JANET_CURRENT_CONFIG_BITS })
+#endif
+
 
 /***** END SECTION CONFIG *****/
 
@@ -292,6 +309,15 @@ JANET_NO_RETURN void _longjmp(jmp_buf, int);
 JANET_API extern const char *const janet_type_names[16];
 JANET_API extern const char *const janet_signal_names[14];
 JANET_API extern const char *const janet_status_names[16];
+
+/* For various IO routines, we want to use an int on posix and HANDLE on windows */
+#ifdef JANET_WINDOWS
+typedef void *JanetHandle;
+#define JANET_HANDLE_NONE NULL
+#else
+typedef int JanetHandle;
+#define JANET_HANDLE_NONE (-1)
+#endif
 
 /* Fiber signals */
 typedef enum {
@@ -555,14 +581,14 @@ JANET_API Janet janet_wrap_integer(int32_t x);
 #define janet_nanbox_tag(type) (janet_nanbox_lowtag(type) << 47)
 #define janet_type(x) \
     (isnan((x).number) \
-        ? (((x).u64 >> 47) & 0xF) \
+        ? (JanetType) (((x).u64 >> 47) & 0xF) \
         : JANET_NUMBER)
 
 #define janet_nanbox_checkauxtype(x, type) \
     (((x).u64 & JANET_NANBOX_TAGBITS) == janet_nanbox_tag((type)))
 
 #define janet_nanbox_isnumber(x) \
-    (!isnan((x).number) || janet_nanbox_checkauxtype((x), JANET_NUMBER))
+    (!isnan((x).number) || ((((x).u64 >> 47) & 0xF) == JANET_NUMBER))
 
 #define janet_checktype(x, t) \
     (((t) == JANET_NUMBER) \
@@ -634,7 +660,7 @@ JANET_API Janet janet_nanbox_from_bits(uint64_t bits);
 #define JANET_DOUBLE_OFFSET 0xFFFF
 
 #define janet_u64(x) ((x).u64)
-#define janet_type(x) (((x).tagged.type < JANET_DOUBLE_OFFSET) ? (x).tagged.type : JANET_NUMBER)
+#define janet_type(x) (((x).tagged.type < JANET_DOUBLE_OFFSET) ? (JanetType)((x).tagged.type) : JANET_NUMBER)
 #define janet_checktype(x, t) ((t) == JANET_NUMBER \
         ? (x).tagged.type >= JANET_DOUBLE_OFFSET \
         : (x).tagged.type == (t))
@@ -711,7 +737,7 @@ JANET_API int janet_checkint64(Janet x);
 JANET_API int janet_checksize(Janet x);
 JANET_API JanetAbstract janet_checkabstract(Janet x, const JanetAbstractType *at);
 #define janet_checkintrange(x) ((x) >= INT32_MIN && (x) <= INT32_MAX && (x) == (int32_t)(x))
-#define janet_checkint64range(x) ((x) >= INT64_MIN && (x) <= INT64_MAX && (x) == (int64_t)(x))
+#define janet_checkint64range(x) ((x) >= JANET_INTMIN_DOUBLE && (x) <= JANET_INTMAX_DOUBLE && (x) == (int64_t)(x))
 #define janet_unwrap_integer(x) ((int32_t) janet_unwrap_number(x))
 #define janet_wrap_integer(x) janet_wrap_number((int32_t)(x))
 
@@ -1001,8 +1027,21 @@ struct JanetRNG {
 typedef struct JanetFile JanetFile;
 struct JanetFile {
     FILE *file;
-    int flags;
+    int32_t flags;
 };
+
+/* For janet_try and janet_restore */
+typedef struct {
+    /* old state */
+    int32_t stackn;
+    int gc_handle;
+    JanetFiber *vm_fiber;
+    jmp_buf *vm_jmp_buf;
+    Janet *vm_return_reg;
+    /* new state */
+    jmp_buf buf;
+    Janet payload;
+} JanetTryState;
 
 /* Thread types */
 #ifdef JANET_THREADS
@@ -1123,6 +1162,9 @@ enum JanetOpCode {
     JOP_GREATER_THAN_EQUAL,
     JOP_LESS_THAN_EQUAL,
     JOP_NEXT,
+    JOP_NOT_EQUALS,
+    JOP_NOT_EQUALS_IMMEDIATE,
+    JOP_CANCEL,
     JOP_INSTRUCTION_COUNT
 };
 
@@ -1307,6 +1349,7 @@ JANET_API void janet_table_merge_table(JanetTable *table, JanetTable *other);
 JANET_API void janet_table_merge_struct(JanetTable *table, JanetStruct other);
 JANET_API JanetKV *janet_table_find(JanetTable *t, Janet key);
 JANET_API JanetTable *janet_table_clone(JanetTable *table);
+JANET_API void janet_table_clear(JanetTable *table);
 
 /* Fiber */
 JANET_API JanetFiber *janet_fiber(JanetFunction *callee, int32_t capacity, int32_t argc, const Janet *argv);
@@ -1377,10 +1420,17 @@ JANET_API int janet_verify(JanetFuncDef *def);
 JANET_API JanetBuffer *janet_pretty(JanetBuffer *buffer, int depth, int flags, Janet x);
 
 /* Misc */
-#ifndef JANET_NO_PRF
+#ifdef JANET_PRF
 #define JANET_HASH_KEY_SIZE 16
 JANET_API void janet_init_hash_key(uint8_t key[JANET_HASH_KEY_SIZE]);
 #endif
+JANET_API void janet_try_init(JanetTryState *state);
+#if defined(JANET_BSD) || defined(JANET_APPLE)
+#define janet_try(state) (janet_try_init(state), (JanetSignal) _setjmp((state)->buf))
+#else
+#define janet_try(state) (janet_try_init(state), (JanetSignal) setjmp((state)->buf))
+#endif
+JANET_API void janet_restore(JanetTryState *state);
 JANET_API int janet_equals(Janet x, Janet y);
 JANET_API int32_t janet_hash(Janet x);
 JANET_API int janet_compare(Janet x, Janet y);
@@ -1403,6 +1453,7 @@ JANET_API int janet_symeq(Janet x, const char *cstring);
 JANET_API int janet_init(void);
 JANET_API void janet_deinit(void);
 JANET_API JanetSignal janet_continue(JanetFiber *fiber, Janet in, Janet *out);
+JANET_API JanetSignal janet_continue_signal(JanetFiber *fiber, Janet in, Janet *out, JanetSignal sig);
 JANET_API JanetSignal janet_pcall(JanetFunction *fun, int32_t argn, const Janet *argv, Janet *out, JanetFiber **f);
 JANET_API JanetSignal janet_step(JanetFiber *fiber, Janet in, Janet *out);
 JANET_API Janet janet_call(JanetFunction *fun, int32_t argc, const Janet *argv);
@@ -1428,6 +1479,7 @@ typedef enum {
 JANET_API void janet_def(JanetTable *env, const char *name, Janet val, const char *documentation);
 JANET_API void janet_var(JanetTable *env, const char *name, Janet val, const char *documentation);
 JANET_API void janet_cfuns(JanetTable *env, const char *regprefix, const JanetReg *cfuns);
+JANET_API void janet_cfuns_prefix(JanetTable *env, const char *regprefix, const JanetReg *cfuns);
 JANET_API JanetBindingType janet_resolve(JanetTable *env, JanetSymbol sym, Janet *out);
 JANET_API void janet_register(const char *name, JanetCFunction cfun);
 
@@ -1437,14 +1489,19 @@ JANET_API Janet janet_resolve_core(const char *name);
 /* New C API */
 
 /* Allow setting entry name for static libraries */
+#ifdef __cplusplus
+#define JANET_MODULE_PREFIX extern "C"
+#else
+#define JANET_MODULE_PREFIX
+#endif
 #ifndef JANET_ENTRY_NAME
 #define JANET_MODULE_ENTRY \
-    JANET_API JanetBuildConfig _janet_mod_config(void) { \
+    JANET_MODULE_PREFIX JANET_API JanetBuildConfig _janet_mod_config(void) { \
         return janet_config_current(); \
     } \
-    JANET_API void _janet_init
+    JANET_MODULE_PREFIX JANET_API void _janet_init
 #else
-#define JANET_MODULE_ENTRY JANET_API void JANET_ENTRY_NAME
+#define JANET_MODULE_ENTRY JANET_MODULE_PREFIX JANET_API void JANET_ENTRY_NAME
 #endif
 
 JANET_NO_RETURN JANET_API void janet_signalv(JanetSignal signal, Janet message);
@@ -1529,12 +1586,17 @@ extern JANET_API const JanetAbstractType janet_file_type;
 #define JANET_FILE_BINARY 64
 #define JANET_FILE_SERIALIZABLE 128
 #define JANET_FILE_PIPED 256
+#define JANET_FILE_NONIL 512
 
-JANET_API Janet janet_makefile(FILE *f, int flags);
-JANET_API FILE *janet_getfile(const Janet *argv, int32_t n, int *flags);
+JANET_API Janet janet_makefile(FILE *f, int32_t flags);
+JANET_API JanetFile *janet_makejfile(FILE *f, int32_t flags);
+JANET_API FILE *janet_getfile(const Janet *argv, int32_t n, int32_t *flags);
 JANET_API FILE *janet_dynfile(const char *name, FILE *def);
+JANET_API JanetFile *janet_getjfile(const Janet *argv, int32_t n);
 JANET_API JanetAbstract janet_checkfile(Janet j);
-JANET_API FILE *janet_unwrapfile(Janet j, int *flags);
+JANET_API FILE *janet_unwrapfile(Janet j, int32_t *flags);
+
+JANET_API int janet_cryptorand(uint8_t *out, size_t n);
 
 /* Marshal API */
 JANET_API void janet_marshal_size(JanetMarshalContext *ctx, size_t value);
@@ -1587,7 +1649,10 @@ typedef enum {
     RULE_ERROR,        /* [rule] */
     RULE_DROP,         /* [rule] */
     RULE_BACKMATCH,    /* [tag] */
+    RULE_TO,           /* [rule] */
+    RULE_THRU,         /* [rule] */
     RULE_LENPREFIX,    /* [rule_a, rule_b (repeat rule_b rule_a times)] */
+    RULE_READINT,      /* [(signedness << 4) | (endianess << 5) | bytewidth, tag] */
 } JanetPegOpcode;
 
 typedef struct {

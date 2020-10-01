@@ -1,5 +1,5 @@
 (import _pq)
-(import com.ahungry.wire.json      :as json       :fresh t)
+(import com.ahungry.wire.json      :as json       :fresh true)
 
 #PQStatus
 (def CONNECTION_OK _pq/CONNECTION_OK)
