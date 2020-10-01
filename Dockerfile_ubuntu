@@ -11,6 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
   libgtk+-3-dev \
   libcurl4-openssl-dev \
   libsqlite3-dev \
+  libpq-dev \
   wget \
   git
 
@@ -27,7 +28,7 @@ WORKDIR /janet
 RUN make
 RUN make install
 
-RUN echo Clone 20201001
+RUN echo Clone 20201001a
 RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
 
 WORKDIR /app
