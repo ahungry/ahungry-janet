@@ -20,7 +20,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 
 RUN mkdir /app
 
-RUN echo Building off 1.13.0 Janet with fixed build script
+RUN echo "Building off 1.13.0 (20201001) Janet with fixed build script"
 
 RUN git clone --depth=1 https://github.com/ahungry/janet /janet
 WORKDIR /janet
@@ -35,7 +35,7 @@ WORKDIR /app
 RUN ./get-iup-linux-files.sh
 RUN make all
 RUN make local-lib
-RUN make app.bin
+RUN make janet.bin
 COPY package-linux.sh /app/
 RUN ./package-linux.sh
 
