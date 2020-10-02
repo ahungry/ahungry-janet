@@ -18,3 +18,4 @@ super-janet-app-linux64/
 *.so.*
 /local-lib/
 /app-gnu-linux64/
+/alloca.h

@@ -8,7 +8,7 @@ LFLAGS=-L. -ljanet
 IUP_CFLAGS=-DIUP_DLL -I./deps/win/iup/include
 IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -L/home/mcarter/software/iup/win64-dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
 
-all: lib/com_ahungry_iup.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll janet.exe
+all: lib/com_ahungry_iup.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/_pq.dll janet.exe
 
 janet.exe: libjanet.dll
 	$(CC) $(CFLAGS) amalg/shell.c -o janet.exe $(LFLAGS)
@@ -26,6 +26,14 @@ lib/com_ahungry_cairo.dll: src/cairo_wrap.c  libjanet.dll libcairo-2.dll
 	-I/usr/x86_64-w64-mingw32/include/cairo \
 	-shared src/cairo_wrap.c -o $@ $(LFLAGS) \
 	-lcairo
+
+lib/_pq.dll: src/janet-pq/pq.c alloca.h
+	$(info TODO Still fix this up to add proper symbols, not working atm)
+	$(CC) $(CFLAGS) \
+	-I/usr/x86_64-w64-mingw32/include/postgresql \
+	-I. \
+	-shared src/janet-pq/pq.c -o $@ $(LFLAGS) \
+	-lpq
 
 lib/com_ahungry_webview.dll: src/webview/webview.c  libjanet.dll
 	$(CC) $(CFLAGS) -shared -DWEBVIEW_WINAPI src/webview/webview.c -o $@ $(LFLAGS) \
@@ -62,6 +70,11 @@ libsqlite3-0.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
 libcairo-2.dll:
 	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+libpq.dll:
+	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+
+alloca.h:
+	cp /usr/x86_64-w64-mingw32/include/malloc.h ./alloca.h
 
 global-install:
 	cp lib/* /usr/local/lib/janet/
