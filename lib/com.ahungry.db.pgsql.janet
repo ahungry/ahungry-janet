@@ -9,3 +9,4 @@
 (def row pgsql/row)
 (def all pgsql/all)
 (def val pgsql/val)
+(def jsonb pgsql/jsonb)
