@@ -1,4 +1,4 @@
-(import com_ahungry_pq :as _pg)
+(import com_ahungry_pq :as _pq)
 (import com.ahungry.wire.json      :as json       :fresh true)
 
 #PQStatus
