@@ -244,7 +244,7 @@
 (declare-source :source ["lib/pq.janet"])
 
 (declare-native
-   :name "_pq"
+   :name "com_ahungry_pq"
    :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" "-I/usr/include/postgresql" (splice (get-cflags))]
    :lflags ["-lpq" (splice (get-lflags))]
    :source @["src/janet-pq/pq.c"])
