@@ -2,9 +2,9 @@
 
 (def conn (pq/connect "postgresql://localhost?dbname=janet"))
 
-(pq/exec conn "create table IF NOT EXISTS users(name text, data jsonb);")
-(pq/exec conn "insert into users(name, data) values($1, $2);" "ac" (pq/jsonb @{"some" "data"}))
-(pq/row conn "select * from users where name = $1;" "ac")
+(pq/exec conn "create table IF NOT EXISTS users (name text, data jsonb);")
+(pq/exec conn "insert into users(name, data) values($1, $2);" "dummy" (pq/jsonb @{"some" "data"}))
+(pq/row conn "select * from users where name = $1;" "dummy")
 
 # {:name "ac" :data @{"some" "data"}}
 (def users (pq/all conn "select * from users"))
