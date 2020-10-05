@@ -1,0 +1,40 @@
+# -*- mode: dockerfile; -*-
+
+# This should fully encapsulate building a minimal binary for Alpine headless
+
+FROM alpine:3.12.0 AS build
+
+RUN apk add --update \
+    git \
+    gcc \
+    make \
+    libcurl \
+    curl-dev \
+    postgresql-dev \
+    libpq \
+    sqlite-libs \
+    sqlite-dev \
+    libc-dev
+
+RUN mkdir /app
+
+RUN echo "Building off 1.13.0 (20201001) Janet with fixed build script"
+
+RUN git clone --depth=1 https://github.com/ahungry/janet /janet
+WORKDIR /janet
+RUN make
+RUN make install
+
+RUN echo Clone 20201001b
+RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
+
+WORKDIR /app
+
+# RUN ./get-iup-linux-files.sh
+RUN make all IUP=none
+RUN make local-lib
+RUN make janet.bin
+# COPY package-linux.sh /app/
+# RUN ./package-linux.sh
+
+CMD sh

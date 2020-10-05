@@ -44,6 +44,12 @@ clean:
 test:
 	janet -m ./lib test/test.janet
 
+docker-alpine-build:
+	docker build -t ahungry_janet_alpine_build . -f Dockerfile_alpine
+
+docker-alpine-run:
+	docker run --name ahungry_janet__alpine_run -it ahungry_janet_alpine_build
+
 docker-build:
 	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
 
