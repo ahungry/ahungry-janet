@@ -185,6 +185,20 @@
 (declare-source :source @["lib/com.ahungry.wire.janet"])
 (declare-source :source @["lib/com.ahungry.wire.json.janet"])
 
+(declare-native
+ :name "com_ahungry_udp"
+ :cflags ["-std=gnu99" "-Wall" "-Wextra"]
+ :lflags ["-lm" "-ldl" "-lpthread"]
+ :source @["src/udp.c"])
+
+# Copies from other projects
+(declare-source :source ["lib/pq.janet"])
+
+(declare-native
+   :name "com_ahungry_pq"
+   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" "-I/usr/include/postgresql" (splice (get-cflags))]
+   :lflags ["-lpq" (splice (get-lflags))]
+   :source @["src/janet-pq/pq.c"])
 
 # BEGIN Webview build stuff
 (defn shell
@@ -234,18 +248,3 @@
             "-I/usr/include/harfbuzz"]
    :lflags ["-lm" "-ldl" "-lpthread" "-lcairo"]
    :source @["src/cairo_wrap.c"]))
-
-(declare-native
- :name "com_ahungry_udp"
- :cflags ["-std=gnu99" "-Wall" "-Wextra"]
- :lflags ["-lm" "-ldl" "-lpthread"]
- :source @["src/udp.c"])
-
-# Copies from other projects
-(declare-source :source ["lib/pq.janet"])
-
-(declare-native
-   :name "com_ahungry_pq"
-   :cflags ["-std=c99" "-Wall" "-Wextra" "-fPIC" "-I/usr/include/postgresql" (splice (get-cflags))]
-   :lflags ["-lpq" (splice (get-lflags))]
-   :source @["src/janet-pq/pq.c"])
