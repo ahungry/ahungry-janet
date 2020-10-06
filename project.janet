@@ -172,6 +172,7 @@
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.conc.atom.janet"])
 (declare-source :source @["lib/com.ahungry.db.janet"])
+(declare-source :source @["lib/com.ahungry.db.pgsql.janet"])
 (declare-source :source @["lib/com.ahungry.db.sqlite.janet"])
 (declare-source :source @["lib/com.ahungry.gfx.cairo.janet"])
 (declare-source :source @["lib/com.ahungry.gui.janet"])
