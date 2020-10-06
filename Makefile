@@ -1,5 +1,6 @@
 # Set to IUP=none to skip iup stuff
 IUP?=linux
+GUI?=yes
 
 CC=gcc
 CFLAGS=-Wall -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-format-truncation -std=gnu99 -fPIC
@@ -30,11 +31,11 @@ janet.bin: libjanet.so.1.12
 	$(CC) $(CFLAGS) -I./amalg amalg/shell.c -o $@ $(LFLAGS) -l:./libjanet.so.1.12
 
 build:
-	-IUP=$(IUP) jpm build
+	-IUP=$(IUP) GUI=$(GUI) jpm build
 	make local-lib
 
 install:
-	-IUP=$(IUP) jpm install
+	-IUP=$(IUP) GUI=$(GUI) jpm install
 
 clean:
 	-jpm clean
@@ -48,7 +49,8 @@ docker-alpine-build:
 	docker build -t ahungry_janet_alpine_build . -f Dockerfile_alpine
 
 docker-alpine-run:
-	docker run --name ahungry_janet__alpine_run -it ahungry_janet_alpine_build
+	-docker rm ahungry_janet_alpine_run
+	docker run --name ahungry_janet_alpine_run -it ahungry_janet_alpine_build
 
 docker-build:
 	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu

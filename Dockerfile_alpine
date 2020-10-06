@@ -18,7 +18,7 @@ RUN apk add --update \
 
 RUN mkdir /app
 
-RUN echo "Building off 1.13.0 (20201001) Janet with fixed build script"
+RUN echo "Building off 1.13.0 (20201006a) Janet with fixed build script"
 
 RUN git clone --depth=1 https://github.com/ahungry/janet /janet
 WORKDIR /janet
@@ -31,9 +31,12 @@ RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
 WORKDIR /app
 
 # RUN ./get-iup-linux-files.sh
-RUN make all IUP=none
-RUN make local-lib
-RUN make janet.bin
+ENV IUP none
+ENV GUI no
+
+RUN make all IUP=none GUI=no
+RUN make local-lib IUP=none GUI=no
+RUN make janet.bin IUP=none GUI=no
 # COPY package-linux.sh /app/
 # RUN ./package-linux.sh
 

@@ -216,12 +216,13 @@
   (parts
     (shell `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0`))))
 
-(declare-native
-    #:name "webview"
-    :name "com_ahungry_webview"
-    :cflags [;default-cflags ;more-flags]
-    :defines {webview-def true}
-    :source @["src/webview/webview.c"])
+(when (= "yes" ((os/environ) "GUI"))
+  (declare-native
+   #:name "webview"
+   :name "com_ahungry_webview"
+   :cflags [;default-cflags ;more-flags]
+   :defines {webview-def true}
+   :source @["src/webview/webview.c"]))
 # END Webview build stuff
 
 (declare-native
