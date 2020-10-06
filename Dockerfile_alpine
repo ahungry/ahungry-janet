@@ -49,14 +49,15 @@ RUN apk add --update \
   make \
   sqlite-libs
 
-COPY --from=build /app /app
+# COPY --from=build /app /app
 COPY --from=build /usr/local/bin/janet /usr/local/bin/
 COPY --from=build /usr/local/bin/jpm /usr/local/bin/
 
 COPY --from=build /usr/local/lib/janet /usr/local/lib/janet
 #RUN mkdir -p /usr/local/lib/janet
 
-# COPY . /app
+COPY ./test /app/test
+COPY ./examples /app/examples
 WORKDIR /app
 
 CMD sh
