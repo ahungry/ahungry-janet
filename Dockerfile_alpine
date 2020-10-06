@@ -40,4 +40,19 @@ RUN make janet.bin IUP=none GUI=no
 # COPY package-linux.sh /app/
 # RUN ./package-linux.sh
 
+FROM alpine:3.12.0
+
+RUN apk add --update \
+  libcurl \
+  libpq \
+  make \
+  sqlite-libs
+
+COPY --from=build /app /app
+COPY --from=build /usr/local/bin/janet /usr/local/bin/
+COPY --from=build /usr/local/bin/jpm /usr/local/bin/
+
+# COPY . /app
+WORKDIR /app
+
 CMD sh
