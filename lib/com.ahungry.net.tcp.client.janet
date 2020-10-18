@@ -21,6 +21,11 @@
   (curl-easy-setopt-pointer ch (const-CURLOPT-HTTPHEADER) headers)
 
   # We really don't need to verify peer for this
+  # FIXME: This does not work on Windows, see:
+  # https://curl.haxx.se/mail/lib-2013-03/0013.html
+  # It would work ok on most GNU/Linux - may need to expose this
+  # setting to Windows users and suggest they do not call endpoint that
+  # could be MITM'ed (such as a locally run proxy in front of remote they need)
   (curl-easy-setopt ch (const-CURLOPT-SSL-VERIFYHOST) 0)
   (curl-easy-setopt ch (const-CURLOPT-SSL-VERIFYPEER) 0)
 
