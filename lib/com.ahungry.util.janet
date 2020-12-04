@@ -131,10 +131,6 @@
 
 (def pb2 (:new PrependableBuffer 20))
 
-(def buf3 (buffer/new (+ (length buf1) (length buf2))))
-
-(buffer/push-string buf3 (string buf1 buf2))
-
 (defn bufcat [buf1 buf2]
   (-> (buffer/new (+ (length buf1) (length buf2)))
       (buffer/push-string (string buf1 buf2))))
