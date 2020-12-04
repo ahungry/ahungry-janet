@@ -71,9 +71,13 @@ table_get (JanetBuffer * kb)
   do {
     if (0 == bytecmp (node->k, node->klen, k, kb->count))
       {
+        free (k);
+
         return node;
       }
   } while ((node = node->next) != NULL);
+
+  free (k);
 
   return NULL;
 }
@@ -102,6 +106,9 @@ table_put (JanetBuffer * kb, JanetBuffer * kv)
 
   if (found)
     {
+      // Free the old reference before allocating a new one.
+      // Using realloc here causes tcache issues
+      free (node->v);
       node->v = malloc (sizeof (uint8_t) * vlen);
       memcpy (node->v, v, vlen);
       node->vlen = vlen;
@@ -123,6 +130,9 @@ table_put (JanetBuffer * kb, JanetBuffer * kv)
 
       nnode->next = NULL;
     }
+
+  free (k);
+  free (v);
 }
 
 office_t *
@@ -196,7 +206,6 @@ make_wrapped (int32_t argc, Janet *argv)
 {
   janet_fixarity (argc, 2);
 
-  ensure_office ();
   pthread_spin_lock (&lock);
 
   JanetBuffer * kb = janet_getbuffer (argv, 0);
@@ -221,6 +230,7 @@ pobox_cfuns[] = {
 /* extern size_t pobox_lib_embed_size; */
 
 JANET_MODULE_ENTRY (JanetTable *env) {
+  ensure_office ();
   janet_cfuns (env, "pobox", pobox_cfuns);
   /* janet_dobytes(env, */
   /*               pobox_lib_embed, */
