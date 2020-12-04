@@ -108,15 +108,16 @@
                              (- (self :midpoint) (self :prepends))
                              (+ (self :midpoint) (self :appends))))
     :push-char-front (fn [self c]
-                 (put self :prepends (inc (self :prepends)))
-                 (put (self :buf) (- (self :midpoint) (self :prepends)) c))
+                       (put self :prepends (inc (self :prepends)))
+                       (put (self :buf) (- (self :midpoint) (self :prepends)) c))
     :push-char (fn [self c]
                  (put (self :buf) (+ (self :midpoint) (self :appends)) c)
                  (put self :appends (inc (self :appends))))
     :new (fn [self max-size]
-           (put self :max-size max-size)
-           (put self :midpoint (/ max-size 2))
-           (put self :buf (buffer/new max-size)))})
+           (def new (table/setproto @{} self))
+           (put new :max-size max-size)
+           (put new :midpoint (/ max-size 2))
+           (put new :buf (buffer/new max-size)))})
 
 (def pb (:new PrependableBuffer 20))
 
