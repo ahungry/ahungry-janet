@@ -95,3 +95,49 @@
   (while (def produced (g next)) (pp next) (set next (f next))))
 
 # (lazy-simple inc |(> 10 $) 0)
+
+
+(def PrependableBuffer
+  @{:buf nil
+    :max-size 0
+    :midpoint 0
+    :prepends 0
+    :appends 0
+    :get-buf (fn [self]
+               (buffer/slice (self :buf)
+                             (- (self :midpoint) (self :prepends))
+                             (+ (self :midpoint) (self :appends))))
+    :push-char-front (fn [self c]
+                 (put self :prepends (inc (self :prepends)))
+                 (put (self :buf) (- (self :midpoint) (self :prepends)) c))
+    :push-char (fn [self c]
+                 (put (self :buf) (+ (self :midpoint) (self :appends)) c)
+                 (put self :appends (inc (self :appends))))
+    :new (fn [self max-size]
+           (put self :max-size max-size)
+           (put self :midpoint (/ max-size 2))
+           (put self :buf (buffer/new max-size)))})
+
+(def pb (:new PrependableBuffer 20))
+
+(:push-char pb 76) # L
+(:push-char pb 76) # L
+(:push-char pb 79) # O
+(:push-char-front pb 69) # E
+(:push-char-front pb 72) # H
+
+(pp (:get-buf pb)) # @"HELLO"
+
+(def pb2 (:new PrependableBuffer 20))
+
+(def buf3 (buffer/new (+ (length buf1) (length buf2))))
+
+(buffer/push-string buf3 (string buf1 buf2))
+
+(defn bufcat [buf1 buf2]
+  (-> (buffer/new (+ (length buf1) (length buf2)))
+      (buffer/push-string (string buf1 buf2))))
+
+(def buf1 @"hi")
+(def buf2 @"bye")
+(pp (bufcat buf1 buf2))
