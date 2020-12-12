@@ -50,6 +50,7 @@
     701 scan-number
     1042 identity
     1043 identity
+    1700 scan-number
     3802 json/decode
   })
 
