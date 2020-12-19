@@ -60,7 +60,7 @@ lib/com_ahungry_meta.dll: src/meta.c libjanet.dll
 
 lib/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll
 	$(CC) $(CFLAGS) -shared src/curl_wrap_app.c -o $@ $(LFLAGS) -lcurl
-	./get-curl-dlls.sh
+	./get-curl-dlls-32.sh
 
 lib/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll libsqlite3-0.dll
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
