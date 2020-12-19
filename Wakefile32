@@ -9,7 +9,7 @@ CFLAGS=-std=c99 -Wall -Wextra -fPIC -mwindows -I./amalg
 LFLAGS=-L. -ljanet
 
 IUP_CFLAGS=-DIUP_DLL -I./deps/win32/iup/include
-IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -L/home/mcarter/software/iup/win64-dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win32/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
+IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win32/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
 
 all: lib/com_ahungry_iup.dll lib/pobox.dll lib/com_ahungry_udp.dll lib/com_ahungry_cairo.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
 
