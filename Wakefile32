@@ -17,7 +17,7 @@ janet.exe: libjanet.dll
 	$(CC) $(CFLAGS) amalg/shell.c -o janet.exe $(LFLAGS)
 
 deps/win32:
-	./get-iup-windows-files.sh
+	./get-iup-windows-files-32.sh
 	./get-dlls.sh
 
 lib/pobox.dll: src/pobox.c libjanet.dll
