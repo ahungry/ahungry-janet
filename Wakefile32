@@ -1,24 +1,22 @@
 # -*- mode: makefile; -*-
 
-ARCH=x86_64-w64-mingw32
-#ARCH=i686-w64-mingw32
+#ARCH=x86_64-w64-mingw32
+ARCH=i686-w64-mingw32
 
 CC=$(ARCH)-gcc
 
 CFLAGS=-std=c99 -Wall -Wextra -fPIC -mwindows -I./amalg
 LFLAGS=-L. -ljanet
 
-IUP_CFLAGS=-DIUP_DLL -I./deps/win/iup/include
-IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -L/home/mcarter/software/iup/win64-dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
-
-#all: lib/com_ahungry_iup.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
+IUP_CFLAGS=-DIUP_DLL -I./deps/win32/iup/include
+IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -L/home/mcarter/software/iup/win64-dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win32/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
 
 all: lib/com_ahungry_iup.dll lib/pobox.dll lib/com_ahungry_udp.dll lib/com_ahungry_cairo.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
 
 janet.exe: libjanet.dll
 	$(CC) $(CFLAGS) amalg/shell.c -o janet.exe $(LFLAGS)
 
-deps/win:
+deps/win32:
 	./get-iup-windows-files.sh
 	./get-dlls.sh
 
@@ -43,7 +41,7 @@ lib/com_ahungry_pq.dll: src/janet-pq/pq.c alloca.h
 	-I. \
 	-shared src/janet-pq/pq.c -o $@ $(LFLAGS) \
 	-lpq
-	./get-pgsql-dlls.sh
+	./get-pgsql-dlls32.sh
 
 lib/com_ahungry_webview.dll: src/webview/webview.c  libjanet.dll
 	$(CC) $(CFLAGS) -shared -DWEBVIEW_WINAPI src/webview/webview.c -o $@ $(LFLAGS) \
@@ -51,7 +49,7 @@ lib/com_ahungry_webview.dll: src/webview/webview.c  libjanet.dll
 	-lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32 \
 	-lole32 -lcomctl32 -loleaut32 -luuid
 
-lib/com_ahungry_iup.dll: src/iup_wrap.c libjanet.dll deps/win
+lib/com_ahungry_iup.dll: src/iup_wrap.c libjanet.dll deps/win32
 	$(CC) $(CFLAGS) -shared $(IUP_CFLAGS) src/iup_wrap.c -o $@ $(LFLAGS) $(IUP_LFLAGS)
 
 lib/com_ahungry_json.dll: src/json/json.c libjanet.dll
@@ -67,21 +65,24 @@ lib/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll
 lib/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll libsqlite3-0.dll
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
 
-libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll libgcc_s_dw2-1.dll libstdc++-6.dll
+libjanet.dll: zlib1.dll libwinpthread-1.dll libgcc_s_seh-1.dll libgcc_s_dw2-1.dll libstdc++-6.dll
 	$(CC) $(CFLAGS) -D_WIN32_WINNT=0x0600 -shared amalg/janet.c -o libjanet.dll -lm -pthread -lwinmm -lmswsock -lws2_32
+
+zlib1.dll:
+	cp /usr/$(ARCH)/bin/$@ ./
 
 libwinpthread-1.dll:
 	cp /usr/$(ARCH)/bin/$@ ./
 
 # For 64 bit build, we need this
-libgcc_s_seh-1.dll:
-	cp /usr/$(ARCH)/bin/$@ ./
-#.PHONY: libgcc_s_seh-1.dll
+#libgcc_s_seh-1.dll:
+#	cp /usr/$(ARCH)/bin/$@ ./
+.PHONY: libgcc_s_seh-1.dll
 
 # For 32 bit build, we need this
-# libgcc_s_dw2-1.dll:
-# 	cp /usr/$(ARCH)/bin/$@ ./
-.PHONY: libgcc_s_dw2-1.dll
+libgcc_s_dw2-1.dll:
+	cp /usr/$(ARCH)/bin/$@ ./
+#.PHONY: libgcc_s_dw2-1.dll
 
 libstdc++-6.dll:
 	cp /usr/$(ARCH)/bin/$@ ./
