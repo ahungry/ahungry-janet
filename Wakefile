@@ -1,6 +1,9 @@
 # -*- mode: makefile; -*-
 
-CC=x86_64-w64-mingw32-gcc
+ARCH=x86_64-w64-mingw32
+#ARCH=i686-w64-mingw32
+
+CC=$(ARCH)-gcc
 
 CFLAGS=-std=c99 -Wall -Wextra -fPIC -mwindows -I./amalg
 LFLAGS=-L. -ljanet
@@ -18,23 +21,23 @@ deps/win:
 	./get-dlls.sh
 
 lib/pobox.dll: src/pobox.c libjanet.dll
-	$(CC) -I/usr/x86_64-w64-mingw32/include $(CFLAGS) \
+	$(CC) -I/usr/$(ARCH)/include $(CFLAGS) \
 	-shared src/pobox.c -o $@ $(LFLAGS) -lws2_32 -lwsock32 -lwinpthread
 
 lib/com_ahungry_udp.dll: src/udp.c libjanet.dll
-	$(CC) -I/usr/x86_64-w64-mingw32/include $(CFLAGS) \
+	$(CC) -I/usr/$(ARCH)/include $(CFLAGS) \
 	-shared src/udp.c -o $@ $(LFLAGS) -lws2_32 -lwsock32 -lwinpthread
 
 lib/com_ahungry_cairo.dll: src/cairo_wrap.c  libjanet.dll libcairo-2.dll
 	$(CC) $(CFLAGS) \
-	-I/usr/x86_64-w64-mingw32/include/cairo \
+	-I/usr/$(ARCH)/include/cairo \
 	-shared src/cairo_wrap.c -o $@ $(LFLAGS) \
 	-lcairo
 
 lib/com_ahungry_pq.dll: src/janet-pq/pq.c alloca.h
 	$(info TODO Still fix this up to add proper symbols, not working atm)
 	$(CC) \
-	-I/usr/x86_64-w64-mingw32/include $(CFLAGS) \
+	-I/usr/$(ARCH)/include $(CFLAGS) \
 	-I. \
 	-shared src/janet-pq/pq.c -o $@ $(LFLAGS) \
 	-lpq
@@ -62,22 +65,31 @@ lib/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll
 lib/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll libsqlite3-0.dll
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
 
-libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll libstdc++-6.dll
+libjanet.dll: libwinpthread-1.dll libgcc_s_seh-1.dll libgcc_s_dw2-1.dll libstdc++-6.dll
 	$(CC) $(CFLAGS) -D_WIN32_WINNT=0x0600 -shared amalg/janet.c -o libjanet.dll -lm -pthread -lwinmm -lmswsock -lws2_32
 
 libwinpthread-1.dll:
-	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+	cp /usr/$(ARCH)/bin/$@ ./
+
+# For 64 bit build, we need this
 libgcc_s_seh-1.dll:
-	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+	cp /usr/$(ARCH)/bin/$@ ./
+#.PHONY: libgcc_s_seh-1.dll
+
+# For 32 bit build, we need this
+# libgcc_s_dw2-1.dll:
+# 	cp /usr/$(ARCH)/bin/$@ ./
+.PHONY: libgcc_s_dw2-1.dll
+
 libstdc++-6.dll:
-	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+	cp /usr/$(ARCH)/bin/$@ ./
 libsqlite3-0.dll:
-	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+	cp /usr/$(ARCH)/bin/$@ ./
 libcairo-2.dll:
-	cp /usr/x86_64-w64-mingw32/bin/$@ ./
+	cp /usr/$(ARCH)/bin/$@ ./
 
 alloca.h:
-	cp /usr/x86_64-w64-mingw32/include/malloc.h ./alloca.h
+	cp /usr/$(ARCH)/include/malloc.h ./alloca.h
 
 global-install:
 	cp lib/* /usr/local/lib/janet/
