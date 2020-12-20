@@ -210,7 +210,7 @@ udp_listen (int listen_port)
  * Wrapper to handle making a socket, sending a string, and closing a socket, all in one.
  */
 static Janet
-send_string (int32_t argc, const Janet *argv)
+send_string (int32_t argc, Janet *argv)
 {
   janet_fixarity (argc, 3);
   const uint8_t *host = janet_getstring (argv, 0);
@@ -230,7 +230,7 @@ send_string (int32_t argc, const Janet *argv)
  * Wrapper to handle making a socket, sending a string, and closing a socket, all in one.
  */
 static Janet
-j_listen (int32_t argc, const Janet *argv)
+j_listen (int32_t argc, Janet *argv)
 {
   janet_fixarity (argc, 1);
 
