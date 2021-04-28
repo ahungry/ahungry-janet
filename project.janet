@@ -169,11 +169,11 @@
   :source @["src/pobox.c"])
 
 (declare-native
-  :name "com_ahungry_crypt_jwt"
+  :name "com_ahungry_crypt"
   :cflags ["-Wall" "-Wextra"]
   :lflags ["-pthread" "-lssl" "-lcrypto" (splice (get-lflags))]
   #:embedded @["pobox_lib.janet"]
-  :source @["src/crypt_jwt.c"])
+  :source @["src/com_ahungry_crypt.c"])
 
 # Original wrappers
 (declare-source :source @["lib/com.ahungry.janet"])
