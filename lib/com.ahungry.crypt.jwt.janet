@@ -5,16 +5,16 @@
 
 (defn- make-signature [secret b64-header b64-payload]
   (crypt/hmac-sha256
-   :sha256 secret
+   secret
    (string/join [b64-header b64-payload] ".")))
 
 (defn make [secret payload-ds]
-  (def header (json/encode {:alg "HS256" :typ "JWT"}))
-  (def payload (json/encode payload-ds))
-  (def b64-header (janetls/base64/encode header :url-unpadded))
-  (def b64-payload (janetls/base64/encode payload :url-unpadded))
+  (def header (string (json/encode {:alg "HS256" :typ "JWT"})))
+  (def payload (string (json/encode payload-ds)))
+  (def b64-header (crypt/base64-encode-nopad header))
+  (def b64-payload (crypt/base64-encode-nopad payload))
   (def signature (make-signature secret b64-header b64-payload))
-  (def b64-signature (janetls/base64/encode signature :url-unpadded))
+  (def b64-signature (crypt/base64-encode-nopad signature))
   (string/join [b64-header b64-payload b64-signature] "."))
 
 (defn verify-signature [secret jwt]
@@ -22,12 +22,12 @@
   (def b64-header (get parts 0))
   (def b64-payload (get parts 1))
   (def b64-signature (get parts 2))
-  (def signature-actual (janetls/base64/decode b64-signature :url-unpadded))
+  (def signature-actual (crypt/base64-decode b64-signature))
   (def signature-expected (make-signature secret b64-header b64-payload))
   (= signature-actual signature-expected))
 
 (defn get-payload [jwt]
   (-> (def parts (string/split "." jwt))
       (get 1)
-      (janetls/base64/decode :url-unpadded)
+      crypt/base64-decode
       json/decode))

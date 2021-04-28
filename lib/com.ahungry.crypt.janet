@@ -11,4 +11,16 @@
 (def hmac-sha256-hex crypt/hmac-sha256-hex)
 (def sha256 crypt/sha256)
 (def base64-encode crypt/base64-encode)
-(def base64-decode crypt/base64-decode)
+
+# Need to allow a variation without padding.
+(defn base64-encode-nopad [s]
+  (-> (crypt/base64-encode s)
+      (string/trim "=")))
+
+# Need to be able to re-add padding on the decode whether its there or not.
+(defn add-padding [s]
+  (let [pad (- 4 (mod (length s) 4))
+        chars (case pad 1 "=" 2 "==" 3 "===" "")]
+    (string s chars)))
+
+(def base64-decode (comp crypt/base64-decode add-padding))
