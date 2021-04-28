@@ -1,5 +1,6 @@
 (import com.ahungry                :as ahungry    :fresh true)
 (import com.ahungry.conc.atom      :as atom       :fresh true)
+(import com.ahungry.crypt.jwt      :as jwt        :fresh true)
 (import com.ahungry.db             :as db         :fresh true)
 (import com.ahungry.db.sqlite      :as sqlite     :fresh true)
 (import com.ahungry.db.pgsql       :as pgsql      :fresh true)
@@ -13,6 +14,7 @@
 
 (printf "com.ahungry: %s"                 (ahungry/meta    :version))
 (printf "com.ahungry.conc.atom: %s"       (atom/meta       :version))
+(printf "com.ahungry.crypt.jwt: %s"       (jwt/meta        :version))
 (printf "com.ahungry.db: %s"              (db/meta         :version))
 (printf "com.ahungry.db.sqlite: %s"       (sqlite/meta     :version))
 (printf "com.ahungry.db.pgsql: %s"        (pgsql/meta      :version))
@@ -29,3 +31,5 @@
 
 (pp sqlite/open)
 (pp iup/main-loop)
+
+(jwt/make "val" "key")

@@ -168,9 +168,17 @@
   #:embedded @["pobox_lib.janet"]
   :source @["src/pobox.c"])
 
+(declare-native
+  :name "com_ahungry_crypt_jwt"
+  :cflags ["-Wall" "-Wextra"]
+  :lflags ["-pthread" "-lssl" "-lcrypto" (splice (get-lflags))]
+  #:embedded @["pobox_lib.janet"]
+  :source @["src/crypt_jwt.c"])
+
 # Original wrappers
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.conc.atom.janet"])
+(declare-source :source @["lib/com.ahungry.crypt.jwt.janet"])
 (declare-source :source @["lib/com.ahungry.db.janet"])
 (declare-source :source @["lib/com.ahungry.db.pgsql.janet"])
 (declare-source :source @["lib/com.ahungry.db.sqlite.janet"])
