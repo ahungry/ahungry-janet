@@ -7,6 +7,6 @@
 
 # (pp (make "val" "key"))
 
-(pp (crypt/hmac-sha256 "key" "val"))
-(pp (crypt/hmac-sha256-hex "key" "val"))
-(pp (crypt/sha256 ""))
+(def hmac-sha256 crypt/hmac-sha256)
+(def hmac-sha256-hex crypt/hmac-sha256-hex)
+(def sha256 crypt/sha256)

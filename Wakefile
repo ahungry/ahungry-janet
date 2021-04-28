@@ -13,7 +13,7 @@ IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -liup -liupim -liu
 
 #all: lib/com_ahungry_iup.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
 
-all: lib/com_ahungry_iup.dll lib/pobox.dll lib/com_ahungry_udp.dll lib/com_ahungry_cairo.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
+all: lib/com_ahungry_iup.dll lib/pobox.dll lib/com_ahungry_udp.dll lib/com_ahungry_cairo.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_crypt.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
 
 janet.exe: libjanet.dll
 	$(CC) $(CFLAGS) amalg/shell.c -o janet.exe $(LFLAGS)
@@ -59,6 +59,10 @@ lib/com_ahungry_json.dll: src/json/json.c libjanet.dll
 
 lib/com_ahungry_meta.dll: src/meta.c libjanet.dll
 	$(CC) $(CFLAGS) -shared src/meta.c -o $@ $(LFLAGS)
+
+lib/com_ahungry_crypt.dll: src/com_ahungry_crypt.c libjanet.dll
+	$(CC) $(CFLAGS) -shared src/com_ahungry_crypt.c -o $@ $(LFLAGS) -lssl -lcrypto
+	./get-openssl-dlls.sh
 
 lib/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll
 	$(CC) $(CFLAGS) -shared src/curl_wrap_app.c -o $@ $(LFLAGS) -lcurl
