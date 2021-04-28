@@ -10,3 +10,5 @@
 (def hmac-sha256 crypt/hmac-sha256)
 (def hmac-sha256-hex crypt/hmac-sha256-hex)
 (def sha256 crypt/sha256)
+(def base64-encode crypt/base64-encode)
+(def base64-decode crypt/base64-decode)

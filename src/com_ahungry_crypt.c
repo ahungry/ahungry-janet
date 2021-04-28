@@ -113,11 +113,49 @@ hmac_sha256_hex_wrapped (int32_t argc, Janet *argv)
   return janet_wrap_string (janet_out);
 }
 
+static Janet
+base64_encode_wrapped (int32_t argc, Janet *argv)
+{
+  janet_fixarity (argc, 1);
+
+  const char * data = janet_getcstring (argv, 0);
+  int datalen = strlen (data);
+  // base64 uses 4 bytes to encode every 3 bytes of input
+  int block_size = datalen / 3 * 4;
+  if (datalen % 3 != 0) block_size += 4;
+  char encoded[block_size];
+  EVP_EncodeBlock ((unsigned char *) encoded, (unsigned char *) data, strlen (data));
+
+  const uint8_t *janet_out = janet_string ((uint8_t *) encoded, strlen (encoded));
+
+  return janet_wrap_string (janet_out);
+}
+
+static Janet
+base64_decode_wrapped (int32_t argc, Janet *argv)
+{
+  janet_fixarity (argc, 1);
+
+  const char * data = janet_getcstring (argv, 0);
+  int datalen = strlen (data);
+  // base64 uses 4 bytes to encode every 3 bytes of input
+  int block_size = datalen / 4 * 3;
+  if (datalen % 4 != 0) block_size += 3;
+  char decoded[1000];
+  EVP_DecodeBlock ((unsigned char *) decoded, (unsigned char *) data, strlen (data));
+
+  const uint8_t *janet_out = janet_string ((uint8_t *) decoded, strlen (decoded));
+
+  return janet_wrap_string (janet_out);
+}
+
 static const JanetReg
 com_ahungry_crypt_cfuns[] = {
   {"hmac-sha256", hmac_sha256_wrapped, "Generate an HS256 in binary output format."},
   {"hmac-sha256-hex", hmac_sha256_hex_wrapped, "Generate an HS256 in hex output format."},
   {"sha256", sha256_wrapped, "Generate a SHA256 in hex output format."},
+  {"base64-encode", base64_encode_wrapped, "Encode string as base64."},
+  {"base64-decode", base64_decode_wrapped, "Decode base64 as string."},
   {NULL,NULL,NULL}
 };
 
