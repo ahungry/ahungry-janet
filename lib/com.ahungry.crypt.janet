@@ -20,7 +20,17 @@
 # Need to be able to re-add padding on the decode whether its there or not.
 (defn add-padding [s]
   (let [pad (- 4 (mod (length s) 4))
-        chars (case pad 1 "=" 2 "==" 3 "===" "")]
+        chars (case pad
+                1 "="
+                2 "=="
+                3 "==="
+                "")]
     (string s chars)))
 
-(def base64-decode (comp crypt/base64-decode add-padding))
+# Some systems (nodejs) translate / -> _, and + -> -
+# So we have to undo these in the decoding.
+(defn undo-url-chars [s]
+  (->> (string/replace "_" "/" s)
+       (string/replace "-" "+")))
+
+(def base64-decode (comp crypt/base64-decode undo-url-chars add-padding))

@@ -27,6 +27,7 @@
 # var token = jwt.sign({ foo: 'bar' }, 'secure', { noTimestamp: true });
 (def token-from-node-jsonwebtoken "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ.l_rKgcZdYix2Qd8zBNeRgFaDHOkmYrHxgW6v3EyH98M")
 
+
 (assert (= true (jwt/verify-signature "secure" token-from-node-jsonwebtoken)))
 (assert (= false (jwt/verify-signature "woops wrong key" token-from-node-jsonwebtoken)))
 
@@ -34,4 +35,10 @@
 # Second one created from node, this time with a built in timestamp
 (def token-from-node-jsonwebtoken2 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE2MTkyMjUwNzB9.3sOw88FlvBkXoqQLnEUEzNbo0Jhs298eR3oQAHWg93o")
 
+(pp "compare these")
+(pp token-from-node-jsonwebtoken2)
+(pp (jwt/make "secure" {:foo "bar"}))
+
+# FIXME: This is failing due to embedded zeroes on the string causing it to be terminated
+# at the \0 character.  Likely need to fix at the C level to use JanetBuffer
 (assert (= true (jwt/verify-signature "secure" token-from-node-jsonwebtoken2)))
