@@ -61,7 +61,7 @@ hmac_sha256_wrapped (int32_t argc, Janet *argv)
 
   result = HMAC(EVP_sha256(), key, keylen, val, vallen, result, &resultlen);
 
-  // FIXME: Adding 1 to resultlen feels weird, not sure if it's necessary
+  // For some reason, it is necessary to add one to resultlen and put NUL in buffer for out.
   char *out = malloc (sizeof(char) * (resultlen + 1));
   char *out2 = out;
 
@@ -80,7 +80,7 @@ hmac_sha256_wrapped (int32_t argc, Janet *argv)
   JanetBuffer *out_buf = janet_buffer (sizeof (const uint8_t) * resultlen);
   janet_buffer_push_bytes (out_buf, (const uint8_t *) out, resultlen);
 
-  // free (out);
+  free (out);
 
   return janet_wrap_buffer (out_buf);
 }
