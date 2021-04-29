@@ -71,11 +71,16 @@ hmac_sha256_wrapped (int32_t argc, Janet *argv)
 
   out[resultlen] = '\0';
 
-  const uint8_t *janet_out = janet_string ((uint8_t *) out, resultlen);
+  /* const uint8_t *janet_out = janet_string ((uint8_t *) out, resultlen); */
+  /* free (out); */
+  /* return janet_wrap_string (janet_out); */
 
-  free (out);
+  JanetBuffer *out_buf = janet_buffer (sizeof (const uint8_t) * resultlen);
+  janet_buffer_push_bytes (out_buf, (const uint8_t *) out, resultlen);
 
-  return janet_wrap_string (janet_out);
+  // free (out);
+
+  return janet_wrap_buffer (out_buf);
 }
 
 static Janet
@@ -118,7 +123,10 @@ base64_encode_wrapped (int32_t argc, Janet *argv)
 {
   janet_fixarity (argc, 1);
 
-  const char * data = janet_getcstring (argv, 0);
+  JanetBuffer *buf = janet_getbuffer (argv, 0);
+  char * data = malloc (sizeof (uint8_t) * buf->count);
+  memcpy (data, buf->data, buf->count);
+  // const char * data = janet_getcstring (argv, 0);
   int datalen = strlen (data);
   // base64 uses 4 bytes to encode every 3 bytes of input
   int block_size = datalen / 3 * 4;
@@ -141,12 +149,15 @@ base64_decode_wrapped (int32_t argc, Janet *argv)
   // base64 uses 4 bytes to encode every 3 bytes of input
   int block_size = datalen / 4 * 3;
   if (datalen % 4 != 0) block_size += 3;
-  char decoded[1000];
+  char decoded[block_size];
   EVP_DecodeBlock ((unsigned char *) decoded, (unsigned char *) data, strlen (data));
 
-  const uint8_t *janet_out = janet_string ((uint8_t *) decoded, strlen (decoded));
+  JanetBuffer *out_buf = janet_buffer (sizeof (const uint8_t) * block_size);
+  janet_buffer_push_bytes (out_buf, (const uint8_t *) decoded, block_size);
 
-  return janet_wrap_string (janet_out);
+  // free (decoded);
+
+  return janet_wrap_buffer (out_buf);
 }
 
 static const JanetReg

@@ -10,11 +10,11 @@
 (def hmac-sha256 crypt/hmac-sha256)
 (def hmac-sha256-hex crypt/hmac-sha256-hex)
 (def sha256 crypt/sha256)
-(def base64-encode crypt/base64-encode)
+(def base64-encode (comp crypt/base64-encode buffer))
 
 # Need to allow a variation without padding.
 (defn base64-encode-nopad [s]
-  (-> (crypt/base64-encode s)
+  (-> (crypt/base64-encode (buffer s))
       (string/trim "=")))
 
 # Need to be able to re-add padding on the decode whether its there or not.
