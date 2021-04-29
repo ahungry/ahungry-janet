@@ -136,6 +136,8 @@ base64_encode_wrapped (int32_t argc, Janet *argv)
   char encoded[block_size];
   int len = EVP_EncodeBlock ((unsigned char *) encoded, (unsigned char *) data, datalen);
 
+  free (data);
+
   const uint8_t *janet_out = janet_string ((uint8_t *) encoded, len);
 
   return janet_wrap_string (janet_out);
