@@ -61,7 +61,8 @@ hmac_sha256_wrapped (int32_t argc, Janet *argv)
 
   result = HMAC(EVP_sha256(), key, keylen, val, vallen, result, &resultlen);
 
-  char *out = malloc (sizeof(char) * resultlen);
+  // FIXME: Adding 1 to resultlen feels weird, not sure if it's necessary
+  char *out = malloc (sizeof(char) * (resultlen + 1));
   char *out2 = out;
 
   for (unsigned int i = 0; i < resultlen; i++)
@@ -69,6 +70,7 @@ hmac_sha256_wrapped (int32_t argc, Janet *argv)
       out2 += sprintf (out2, "%c", result[i]);
     }
 
+  resultlen++;
   out[resultlen] = '\0';
 
   /* const uint8_t *janet_out = janet_string ((uint8_t *) out, resultlen); */

@@ -1,11 +1,20 @@
 (import com.ahungry.crypt :as crypt)
 (import com.ahungry.crypt.jwt :as jwt)
 
-(pp (crypt/hmac-sha256 "key" "val"))
-(pp (crypt/hmac-sha256-hex "key" "val"))
-(pp (crypt/sha256 ""))
+# (pp "SHA256:")
+# (pp (crypt/sha256 ""))
 
+# (pp "HS256:")
+# (pp (crypt/hmac-sha256 "key" "val"))
+
+# (pp "HS256-Hex:")
+# (pp (crypt/hmac-sha256-hex "key" "val"))
+
+(pp "base64")
 (pp (crypt/base64-encode "hi"))
+
+(os/exit 0)
+
 (pp (crypt/base64-encode "the quick brown fox jumps over the two story household isnt this an interesting sentence blablabla"))
 
 (pp
@@ -35,10 +44,6 @@
 # Second one created from node, this time with a built in timestamp
 (def token-from-node-jsonwebtoken2 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE2MTkyMjUwNzB9.3sOw88FlvBkXoqQLnEUEzNbo0Jhs298eR3oQAHWg93o")
 
-(pp "compare these")
-(pp token-from-node-jsonwebtoken2)
-(pp (jwt/make "secure" {:foo "bar"}))
-
-# FIXME: This is failing due to embedded zeroes on the string causing it to be terminated
-# at the \0 character.  Likely need to fix at the C level to use JanetBuffer
 (assert (= true (jwt/verify-signature "secure" token-from-node-jsonwebtoken2)))
+
+(pp "No assert failures, yay!")

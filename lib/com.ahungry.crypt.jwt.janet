@@ -24,9 +24,11 @@
   (def b64-signature (get parts 2))
   (def signature-actual (crypt/base64-decode b64-signature))
   (def signature-expected (make-signature secret b64-header b64-payload))
-  (pp signature-actual)
-  (pp signature-expected)
-  (= signature-actual signature-expected))
+
+  # (pp signature-actual)
+  # (pp signature-expected)
+
+  (deep= signature-actual signature-expected))
 
 (defn get-payload [jwt]
   (-> (def parts (string/split "." jwt))
