@@ -11,9 +11,7 @@
 # (pp (crypt/hmac-sha256-hex "key" "val"))
 
 (pp "base64")
-(pp (crypt/base64-encode "hi"))
-
-(os/exit 0)
+(pp (crypt/base64-encode "hello world"))
 
 (pp (crypt/base64-encode "the quick brown fox jumps over the two story household isnt this an interesting sentence blablabla"))
 
@@ -24,9 +22,9 @@
 
 # Reflection test
 (assert (= true (jwt/verify-signature "secure" (jwt/make "secure" {:hello "World"}))))
-(def hardcoded-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6IldvcmxkIn0.rEJgyCQrOtCskAyDS95esDxmXLqgdx8ltGPxlLoWL4E" )
-(pp (jwt/make "secure" {:hello "World"}))
+(def hardcoded-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6IldvcmxkIn0.rEJgyCQrOtCskAyDS95esDxmXLqgdx8ltGPxlLoWL4EA" )
 (pp hardcoded-token)
+(pp (jwt/make "secure" {:hello "World"}))
 (assert (= hardcoded-token (jwt/make "secure" {:hello "World"})))
 
 (def payload-data (jwt/get-payload hardcoded-token))

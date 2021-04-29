@@ -128,15 +128,15 @@ base64_encode_wrapped (int32_t argc, Janet *argv)
   JanetBuffer *buf = janet_getbuffer (argv, 0);
   char * data = malloc (sizeof (uint8_t) * buf->count);
   memcpy (data, buf->data, buf->count);
-  // const char * data = janet_getcstring (argv, 0);
-  int datalen = strlen (data);
+  int datalen = buf->count;
+
   // base64 uses 4 bytes to encode every 3 bytes of input
   int block_size = datalen / 3 * 4;
   if (datalen % 3 != 0) block_size += 4;
   char encoded[block_size];
-  EVP_EncodeBlock ((unsigned char *) encoded, (unsigned char *) data, strlen (data));
+  int len = EVP_EncodeBlock ((unsigned char *) encoded, (unsigned char *) data, datalen);
 
-  const uint8_t *janet_out = janet_string ((uint8_t *) encoded, strlen (encoded));
+  const uint8_t *janet_out = janet_string ((uint8_t *) encoded, len);
 
   return janet_wrap_string (janet_out);
 }
