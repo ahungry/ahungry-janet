@@ -126,28 +126,21 @@ https://github.com/antirez/linenoise/blob/master/linenoise.c
 #define JANET_LINE_MAX 1024
 #define JANET_MATCH_MAX 256
 #define JANET_HISTORY_MAX 100
-static int gbl_israwmode = 0;
-static const char *gbl_prompt = "> ";
-static int gbl_plen = 2;
-static char gbl_buf[JANET_LINE_MAX];
-static int gbl_len = 0;
-static int gbl_pos = 0;
-static int gbl_cols = 80;
-static char *gbl_history[JANET_HISTORY_MAX];
-static int gbl_history_count = 0;
-static int gbl_historyi = 0;
-static int gbl_sigint_flag = 0;
-static struct termios gbl_termios_start;
-static JanetByteView gbl_matches[JANET_MATCH_MAX];
-static int gbl_match_count = 0;
-static int gbl_lines_below = 0;
-
-/* Put a lock around this global state so we don't screw up
- * the terminal in a multithreaded situation */
-#ifndef JANET_SINGLE_THREADED
-#include <pthread.h>
-static pthread_mutex_t gbl_lock = PTHREAD_MUTEX_INITIALIZER;
-#endif
+static JANET_THREAD_LOCAL int gbl_israwmode = 0;
+static JANET_THREAD_LOCAL const char *gbl_prompt = "> ";
+static JANET_THREAD_LOCAL int gbl_plen = 2;
+static JANET_THREAD_LOCAL char gbl_buf[JANET_LINE_MAX];
+static JANET_THREAD_LOCAL int gbl_len = 0;
+static JANET_THREAD_LOCAL int gbl_pos = 0;
+static JANET_THREAD_LOCAL int gbl_cols = 80;
+static JANET_THREAD_LOCAL char *gbl_history[JANET_HISTORY_MAX];
+static JANET_THREAD_LOCAL int gbl_history_count = 0;
+static JANET_THREAD_LOCAL int gbl_historyi = 0;
+static JANET_THREAD_LOCAL int gbl_sigint_flag = 0;
+static JANET_THREAD_LOCAL struct termios gbl_termios_start;
+static JANET_THREAD_LOCAL JanetByteView gbl_matches[JANET_MATCH_MAX];
+static JANET_THREAD_LOCAL int gbl_match_count = 0;
+static JANET_THREAD_LOCAL int gbl_lines_below = 0;
 
 /* Unsupported terminal list from linenoise */
 static const char *badterms[] = {
@@ -159,7 +152,7 @@ static const char *badterms[] = {
 
 static char *sdup(const char *s) {
     size_t len = strlen(s) + 1;
-    char *mem = malloc(len);
+    char *mem = janet_malloc(len);
     if (!mem) {
         return NULL;
     }
@@ -169,9 +162,6 @@ static char *sdup(const char *s) {
 /* Ansi terminal raw mode */
 static int rawmode(void) {
     struct termios t;
-#ifndef JANET_SINGLE_THREADED
-    pthread_mutex_lock(&gbl_lock);
-#endif
     if (!isatty(STDIN_FILENO)) goto fatal;
     if (tcgetattr(STDIN_FILENO, &gbl_termios_start) == -1) goto fatal;
     t = gbl_termios_start;
@@ -185,9 +175,6 @@ static int rawmode(void) {
     return 0;
 fatal:
     errno = ENOTTY;
-#ifndef JANET_SINGLE_THREADED
-    pthread_mutex_unlock(&gbl_lock);
-#endif
     return -1;
 }
 
@@ -195,9 +182,6 @@ fatal:
 static void norawmode(void) {
     if (gbl_israwmode && tcsetattr(STDIN_FILENO, TCSADRAIN, &gbl_termios_start) != -1)
         gbl_israwmode = 0;
-#ifndef JANET_SINGLE_THREADED
-    pthread_mutex_unlock(&gbl_lock);
-#endif
 }
 
 static int curpos(void) {
@@ -316,7 +300,7 @@ static int insert(char c, int draw) {
 
 static void historymove(int delta) {
     if (gbl_history_count > 1) {
-        free(gbl_history[gbl_historyi]);
+        janet_free(gbl_history[gbl_historyi]);
         gbl_history[gbl_historyi] = sdup(gbl_buf);
 
         gbl_historyi += delta;
@@ -342,7 +326,7 @@ static void addhistory(void) {
         gbl_history[gbl_history_count++] = newline;
         len++;
     } else {
-        free(gbl_history[JANET_HISTORY_MAX - 1]);
+        janet_free(gbl_history[JANET_HISTORY_MAX - 1]);
     }
     for (i = len - 1; i > 0; i--) {
         gbl_history[i] = gbl_history[i - 1];
@@ -354,7 +338,7 @@ static void replacehistory(void) {
     /* History count is always > 0 here */
     if (gbl_len == 0 || (gbl_history_count > 1 && !strcmp(gbl_buf, gbl_history[1]))) {
         /* Delete history */
-        free(gbl_history[0]);
+        janet_free(gbl_history[0]);
         for (int i = 1; i < gbl_history_count; i++) {
             gbl_history[i - 1] = gbl_history[i];
         }
@@ -362,7 +346,7 @@ static void replacehistory(void) {
     } else {
         char *newline = sdup(gbl_buf);
         if (!newline) return;
-        free(gbl_history[0]);
+        janet_free(gbl_history[0]);
         gbl_history[0] = newline;
     }
 }
@@ -774,6 +758,10 @@ static int line() {
                 kleft();
                 break;
             case 3:     /* ctrl-c */
+                clearlines();
+                gbl_sigint_flag = 1;
+                return -1;
+            case 17:    /* ctrl-q */
                 gbl_cancel_current_repl_form = 1;
                 clearlines();
                 return -1;
@@ -946,7 +934,7 @@ void janet_line_deinit() {
     int i;
     norawmode();
     for (i = 0; i < gbl_history_count; i++)
-        free(gbl_history[i]);
+        janet_free(gbl_history[i]);
     gbl_historyi = 0;
 }
 
@@ -1054,19 +1042,23 @@ int main(int argc, char **argv) {
     janet_table_put(env, janet_ckeywordv("executable"), janet_cstringv(argv[0]));
 
     /* Run startup script */
-    Janet mainfun, out;
+    Janet mainfun;
     janet_resolve(env, janet_csymbol("cli-main"), &mainfun);
     Janet mainargs[1] = { janet_wrap_array(args) };
     JanetFiber *fiber = janet_fiber(janet_unwrap_function(mainfun), 64, 1, mainargs);
     fiber->env = env;
+
+#ifdef JANET_EV
+    janet_gcroot(janet_wrap_fiber(fiber));
+    janet_schedule(fiber, janet_wrap_nil());
+    janet_loop();
+    status = janet_fiber_status(fiber);
+#else
+    Janet out;
     status = janet_continue(fiber, janet_wrap_nil(), &out);
     if (status != JANET_SIGNAL_OK && status != JANET_SIGNAL_EVENT) {
         janet_stacktrace(fiber, out);
     }
-
-#ifdef JANET_NET
-    status = JANET_SIGNAL_OK;
-    janet_loop();
 #endif
 
     /* Deinitialize vm */

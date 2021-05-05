@@ -21,14 +21,14 @@ package-windows:
 	make ming
 	./package-windows.sh
 
-libjanet.so.1.12: libjanet.so
-	ln -sfn libjanet.so $@
-
-libjanet.so:
+libjanet.so.1.16:
 	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
 
-janet.bin: libjanet.so.1.12
-	$(CC) $(CFLAGS) -I./amalg amalg/shell.c -o $@ $(LFLAGS) -l:./libjanet.so.1.12
+libjanet.so: libjanet.so.1.16
+	ln -sfn $< $@
+
+janet.bin: libjanet.so
+	$(CC) $(CFLAGS) -I./amalg amalg/shell.c -o $@ $(LFLAGS) -L. -l:./libjanet.so
 
 build:
 	-IUP=$(IUP) GUI=$(GUI) jpm build
@@ -41,6 +41,7 @@ clean:
 	-jpm clean
 	-jpm clear-cache
 	-jpm clear-manifest
+	-rm -f libjanet.so libjanet.so.1.16 janet.bin
 
 test:
 	janet -m ./lib test/test.janet

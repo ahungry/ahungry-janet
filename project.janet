@@ -191,6 +191,7 @@
 (declare-source :source @["lib/com.ahungry.net.tcp.client.janet"])
 (declare-source :source @["lib/com.ahungry.net.udp.client.janet"])
 (declare-source :source @["lib/com.ahungry.net.udp.server.janet"])
+(declare-source :source @["lib/com.ahungry.util.janet"])
 (declare-source :source @["lib/com.ahungry.wire.janet"])
 (declare-source :source @["lib/com.ahungry.wire.json.janet"])
 

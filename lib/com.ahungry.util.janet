@@ -127,7 +127,7 @@
 (:push-char-front pb 69) # E
 (:push-char-front pb 72) # H
 
-(pp (:get-buf pb)) # @"HELLO"
+#(pp (:get-buf pb)) # @"HELLO"
 
 (def pb2 (:new PrependableBuffer 20))
 
@@ -137,4 +137,4 @@
 
 (def buf1 @"hi")
 (def buf2 @"bye")
-(pp (bufcat buf1 buf2))
+#(pp (bufcat buf1 buf2))
