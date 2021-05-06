@@ -185,6 +185,7 @@
 # Original wrappers
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.conc.atom.janet"])
+(declare-source :source @["lib/com.ahungry.crypt.janet"])
 (declare-source :source @["lib/com.ahungry.crypt.jwt.janet"])
 (declare-source :source @["lib/com.ahungry.db.janet"])
 (declare-source :source @["lib/com.ahungry.db.pgsql.janet"])
