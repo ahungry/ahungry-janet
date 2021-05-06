@@ -22,15 +22,15 @@ deps/win:
 	./get-iup-windows-files.sh
 	./get-dlls.sh
 
-lib/pobox.dll: src/pobox.c libjanet.dll
+lib/pobox.dll: src/pobox.c
 	$(CC) -I/usr/$(ARCH)/include $(CFLAGS) \
 	-shared src/pobox.c -o $@ $(LFLAGS) -lws2_32 -lwsock32 -lwinpthread
 
-lib/com_ahungry_udp.dll: src/udp.c libjanet.dll
+lib/com_ahungry_udp.dll: src/udp.c
 	$(CC) -I/usr/$(ARCH)/include $(CFLAGS) \
 	-shared src/udp.c -o $@ $(LFLAGS) -lws2_32 -lwsock32 -lwinpthread
 
-lib/com_ahungry_cairo.dll: src/cairo_wrap.c  libjanet.dll libcairo-2.dll
+lib/com_ahungry_cairo.dll: src/cairo_wrap.c  libcairo-2.dll
 	$(CC) $(CFLAGS) \
 	-I/usr/$(ARCH)/include/cairo \
 	-shared src/cairo_wrap.c -o $@ $(LFLAGS) \
@@ -45,33 +45,33 @@ lib/com_ahungry_pq.dll: src/janet-pq/pq.c alloca.h
 	-lpq
 	./get-pgsql-dlls.sh
 
-lib/com_ahungry_webview.dll: src/webview/webview.c  libjanet.dll
+lib/com_ahungry_webview.dll: src/webview/webview.c
 	$(CC) $(CFLAGS) -shared -DWEBVIEW_WINAPI src/webview/webview.c -o $@ $(LFLAGS) \
 	-lz -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 \
 	-lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32 \
 	-lole32 -lcomctl32 -loleaut32 -luuid
 
-lib/com_ahungry_iup.dll: src/iup_wrap.c libjanet.dll deps/win
+lib/com_ahungry_iup.dll: src/iup_wrap.c deps/win
 	$(CC) $(CFLAGS) -shared $(IUP_CFLAGS) src/iup_wrap.c -o $@ $(LFLAGS) $(IUP_LFLAGS)
 
-lib/com_ahungry_json.dll: src/json/json.c libjanet.dll
+lib/com_ahungry_json.dll: src/json/json.c
 	$(CC) $(CFLAGS) -shared src/json/json.c -o $@ $(LFLAGS)
 
-lib/com_ahungry_meta.dll: src/meta.c libjanet.dll
+lib/com_ahungry_meta.dll: src/meta.c
 	$(CC) $(CFLAGS) -shared src/meta.c -o $@ $(LFLAGS)
 
-lib/com_ahungry_io.dll: src/com_ahungry_io.c libjanet.dll
+lib/com_ahungry_io.dll: src/com_ahungry_io.c
 	$(CC) $(CFLAGS) -I./src -shared src/com_ahungry_io.c -o $@ $(LFLAGS)
 
-lib/com_ahungry_crypt.dll: src/com_ahungry_crypt.c libjanet.dll
+lib/com_ahungry_crypt.dll: src/com_ahungry_crypt.c
 	$(CC) $(CFLAGS) -shared src/com_ahungry_crypt.c -o $@ $(LFLAGS) -lssl -lcrypto
 	./get-openssl-dlls.sh
 
-lib/com_ahungry_curl.dll: src/curl_wrap_app.c libjanet.dll
+lib/com_ahungry_curl.dll: src/curl_wrap_app.c
 	$(CC) $(CFLAGS) -shared src/curl_wrap_app.c -o $@ $(LFLAGS) -lcurl
 	./get-curl-dlls.sh
 
-lib/com_ahungry_sqlite3.dll: src/sqlite3/main.c libjanet.dll libsqlite3-0.dll
+lib/com_ahungry_sqlite3.dll: src/sqlite3/main.c libsqlite3-0.dll
 	$(CC) $(CFLAGS) -shared src/sqlite3/main.c -o $@ $(LFLAGS) -lsqlite3
 
 libjanet.dll: libjanet-1.16.dll
