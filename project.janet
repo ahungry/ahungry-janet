@@ -175,6 +175,13 @@
   #:embedded @["pobox_lib.janet"]
   :source @["src/com_ahungry_crypt.c"])
 
+(declare-native
+  :name "com_ahungry_io"
+  :cflags ["-Wall" "-Wextra"]
+  :lflags ["-pthread" (splice (get-lflags))]
+  # :embedded @["pobox_lib.janet"]
+  :source @["src/com_ahungry_io.c"])
+
 # Original wrappers
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.conc.atom.janet"])
@@ -186,6 +193,7 @@
 (declare-source :source @["lib/com.ahungry.gui.janet"])
 (declare-source :source @["lib/com.ahungry.gui.iup.janet"])
 (declare-source :source @["lib/com.ahungry.gui.webview.janet"])
+(declare-source :source @["lib/com.ahungry.io.janet"])
 (declare-source :source @["lib/com.ahungry.meta.janet"])
 (declare-source :source @["lib/com.ahungry.net.janet"])
 (declare-source :source @["lib/com.ahungry.net.tcp.client.janet"])
