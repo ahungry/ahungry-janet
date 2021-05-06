@@ -182,6 +182,13 @@
   # :embedded @["pobox_lib.janet"]
   :source @["src/com_ahungry_io.c"])
 
+(declare-native
+ # Apparently having a dash in name breaks the macros
+  :name "com_ahungry_punyserver"
+  :cflags ["-std=gnu99" "-Wall" "-Wextra" "-fPIC"]
+  :lflags ["-lpthread"]
+  :source @["src/puny-server.c" "src/puny-server-wrap.c"])
+
 # Original wrappers
 (declare-source :source @["lib/com.ahungry.janet"])
 (declare-source :source @["lib/com.ahungry.conc.atom.janet"])
@@ -198,6 +205,7 @@
 (declare-source :source @["lib/com.ahungry.meta.janet"])
 (declare-source :source @["lib/com.ahungry.net.janet"])
 (declare-source :source @["lib/com.ahungry.net.tcp.client.janet"])
+(declare-source :source @["lib/com.ahungry.net.tcp.server.janet"])
 (declare-source :source @["lib/com.ahungry.net.udp.client.janet"])
 (declare-source :source @["lib/com.ahungry.net.udp.server.janet"])
 (declare-source :source @["lib/com.ahungry.util.janet"])
