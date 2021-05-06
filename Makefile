@@ -47,22 +47,22 @@ test:
 	janet -m ./lib test/test.janet
 
 docker-alpine-build:
-	docker build -t ahungry_janet_alpine_build . -f Dockerfile_alpine
+	env docker build -t ahungry_janet_alpine_build . -f Dockerfile_alpine
 
 docker-alpine-run:
-	-docker rm ahungry_janet_alpine_run
-	docker run --name ahungry_janet_alpine_run -it ahungry_janet_alpine_build
+	-env docker rm ahungry_janet_alpine_run
+	env docker run --name ahungry_janet_alpine_run -it ahungry_janet_alpine_build
 
 docker-build:
-	docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
+	env docker build -t ahungry_janet_build . -f Dockerfile_ubuntu
 
 docker-get:
-	docker cp ahungry_janet_run:/app/app-gnu-linux64.tar.gz ./
+	env docker cp ahungry_janet_run:/app/app-gnu-linux64.tar.gz ./
 
 docker-run:
 	$(info docker cp ahungry_janet:/app/app-gnu-linux64.tar.gz ./)
-	-docker rm ahungry_janet_run
-	docker run --name ahungry_janet_run \
+	-env docker rm ahungry_janet_run
+	env docker run --name ahungry_janet_run \
 	-it ahungry_janet_build
 
 local-lib:

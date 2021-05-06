@@ -18,14 +18,13 @@ RUN apk add --update \
 
 RUN mkdir /app
 
-RUN echo "Building off 1.13.0 (20201006a) Janet with fixed build script"
+RUN echo "Building off 1.16.0 (20210505a) Janet with fixed build script"
 
 RUN git clone --depth=1 https://github.com/ahungry/janet /janet
 WORKDIR /janet
 RUN make
 RUN make install
 
-RUN echo Clone 20201006c
 RUN git clone --depth=1 https://github.com/ahungry/ahungry-janet /app
 
 WORKDIR /app
