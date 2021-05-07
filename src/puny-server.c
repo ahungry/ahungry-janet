@@ -86,6 +86,8 @@ read_tcp (int sock)
   // TODO: Add parsing for content-length on input body
   // Read until we see double newlines
   int has_seen_req_terminator = 0;
+  int req_terminator_pos = 0;
+  int final_content_length = 0;
 
   // Keep polling for client input until we have useful buf input
   while (! has_seen_req_terminator)
@@ -99,6 +101,40 @@ read_tcp (int sock)
           offset += n;
 
           has_seen_req_terminator = NULL != strstr (buf, "\r\n\r\n");
+
+          // Before we end, confirm we didn't find a Content-Length - if we did,
+          // we need to read at least that many more bytes.
+          char *content_length1 = strstr (buf, "content-length: ");
+          char *content_length2 = strstr (buf, "Content-Length: ");
+          char *content_length = NULL == content_length1 ? content_length2 : content_length1;
+
+          if (NULL != content_length)
+            {
+              fprintf (stderr, "Saw some content_length");
+              fflush (stderr);
+
+              int nl_offset = 0;
+
+              // Find where the next \r is
+              for (int i = 0; i < (int) strlen (content_length); i++)
+                {
+                  if ('\r' == content_length[i])
+                    {
+                      nl_offset = i;
+                      break;
+                    }
+                }
+
+              int textlen = 16; // content-length: string
+              char *clen_string = malloc (sizeof (char) * nl_offset);
+              memcpy (clen_string, content_length + textlen, nl_offset - textlen);
+              final_content_length = atoi (clen_string);
+
+              fprintf (stderr,
+                       "The nl_offset was: %d, fcl: %d - clen: %s\n",
+                       nl_offset, final_content_length, clen_string);
+              fflush (stderr);
+            }
 
           if (set_timer == 0)
             {
@@ -124,7 +160,26 @@ read_tcp (int sock)
 #endif
               set_timer = 1;
             }
+        }
+    }
 
+  if (final_content_length)
+    {
+      char *ending = strstr (buf, "\r\n\r\n");
+
+      // Pointer subtraction to find the index pos, neat.
+      int header_length = (ending - buf) + 4;
+
+      while ((int) strlen (buf) < header_length + final_content_length)
+        {
+          while ((n = recv (sock, tmp, read_bytes, 0)) > 0)
+            {
+              tmp[n] = 0;
+              int mem = ++i * read_bytes * sizeof (char);
+              buf = realloc (buf, mem);
+              memcpy (buf + offset, tmp, strlen (tmp));
+              offset += n;
+            }
         }
     }
 
