@@ -83,39 +83,49 @@ read_tcp (int sock)
   char tmp[CLIENT_CHUNK];
   int set_timer = 0;
 
-  while ((n = recv (sock, tmp, read_bytes, 0)) > 0)
+  // TODO: Add parsing for content-length on input body
+  // Read until we see double newlines
+  int has_seen_req_terminator = 0;
+
+  // Keep polling for client input until we have useful buf input
+  while (! has_seen_req_terminator)
     {
-      tmp[n] = 0;
-      int mem = ++i * read_bytes * sizeof (char);
-      buf = realloc (buf, mem);
-      memcpy (buf + offset, tmp, strlen (tmp));
-      offset += n;
-
-      if (set_timer == 0)
+      while ((n = recv (sock, tmp, read_bytes, 0)) > 0)
         {
-  // https://stackoverflow.com/questions/2876024/linux-is-there-a-read-or-recv-from-socket-with-timeout
+          tmp[n] = 0;
+          int mem = ++i * read_bytes * sizeof (char);
+          buf = realloc (buf, mem);
+          memcpy (buf + offset, tmp, strlen (tmp));
+          offset += n;
+
+          has_seen_req_terminator = NULL != strstr (buf, "\r\n\r\n");
+
+          if (set_timer == 0)
+            {
+              // https://stackoverflow.com/questions/2876024/linux-is-there-a-read-or-recv-from-socket-with-timeout
 #ifdef _WIN32
-  // WINDOWS
-  // DWORD timeout = timeout_in_seconds * 1000;
-  DWORD timeout = 10;
-  setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof timeout);
+              // WINDOWS
+              // DWORD timeout = timeout_in_seconds * 1000;
+              DWORD timeout = 10;
+              setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof timeout);
 
-  // FIXME: This will only read max CLIENT_CHUNK from users.
-  // We can break here so its fast on windows, until we figure out select
-  // based polling so we don't wait forever for the client option.
-  // https://docs.microsoft.com/en-us/windows/win32/winsock/receiving-and-sending-data-on-the-server
-  break;
+              // FIXME: This will only read max CLIENT_CHUNK from users.
+              // We can break here so its fast on windows, until we figure out select
+              // based polling so we don't wait forever for the client option.
+              // https://docs.microsoft.com/en-us/windows/win32/winsock/receiving-and-sending-data-on-the-server
+              break;
 #else
-  // LINUX
-  struct timeval tv;
-  tv.tv_sec = 0;
-  // We need a way to dynamically set this after first received byte in read() call
-  tv.tv_usec = 1; // 500,000 would be half a second, as this is micro seconds
-  setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+              // LINUX
+              struct timeval tv;
+              tv.tv_sec = 0;
+              // We need a way to dynamically set this after first received byte in read() call
+              tv.tv_usec = 1; // 500,000 would be half a second, as this is micro seconds
+              setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
 #endif
-  set_timer = 1;
-        }
+              set_timer = 1;
+            }
 
+        }
     }
 
   buf[offset] = 0;
