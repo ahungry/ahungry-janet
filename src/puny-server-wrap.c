@@ -12,27 +12,39 @@ janet_universal_cb (char *request)
   janet_init ();
   env = janet_core_env (NULL);
 
-  JanetArray *args;
-
-  const uint8_t *s = janet_string ((unsigned char *) request, strlen (request));
-
-  args = janet_array (1);
-  janet_array_push (args, janet_wrap_string (s));
-
   char *embed = malloc (200 + strlen (request));
 
   sprintf (embed, "(import %s :as h) (h/main \n```%s\n```)",
            handler,
            request);
 
-  Janet *out = malloc (1);
-  janet_dostring (env, embed, "main", out);
-  janet_deinit ();
+  // Without locking the gc, mingw/Windows seems to segfault after dostring
+  // but before the return value is accessible, even with gcroot calls.
+  Janet ret;
+  int h = janet_gclock ();
 
-  const char *result = janet_getcstring (out, 0);
+  janet_dostring (env, embed, "main", &ret);
 
-  free (out);
+  const unsigned char *result;
+
+  if (janet_checktype (ret, JANET_STRING))
+    {
+      result = janet_unwrap_string (ret);
+    }
+  else
+    {
+      fprintf (stderr, "janet_universal_cb must return a string.");
+      result = (uint8_t *) "HTTP/1.1 500 Internal Server Error\n"
+        "Content-Type: text/html\n"
+        "Content-Length: 25\n"
+        "Connection: close\n\n"
+        "500 Internal Server Error";
+    }
+
+  janet_gcunlock (h);
+
   free (embed);
+  janet_deinit ();
 
   return (char *) result;
 }

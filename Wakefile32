@@ -11,7 +11,7 @@ LFLAGS=-L. -ljanet
 IUP_CFLAGS=-DIUP_DLL -I./deps/win32/iup/include
 IUP_LFLAGS=-Wl,--out-implib,libiup_dll.a -L./ -l:libjanet.dll -liup -liupim -liup_scintilla -lfreetype6 -lftgl -liupcd -liupcontrols -liupgl -liupglcontrols -liup_mglplot -liupole -liup_plot -liuptuio -lz -liupimglib -L./deps/win32/im -lim -lz -lm -pthread -lwinmm -lws2_32 -lmswsock -ladvapi32 -lopengl32 -lpangowin32-1.0 -lgdi32 -luuid -lcomctl32 -lole32 -lcomdlg32 -lmingw32
 
-all: lib/com_ahungry_iup.dll lib/pobox.dll lib/com_ahungry_udp.dll lib/com_ahungry_cairo.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_io.dll lib/com_ahungry_crypt.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
+all: lib/com_ahungry_iup.dll lib/pobox.dll lib/com_ahungry_udp.dll lib/com_ahungry_cairo.dll lib/com_ahungry_json.dll lib/com_ahungry_meta.dll lib/com_ahungry_punyserver.dll lib/com_ahungry_io.dll lib/com_ahungry_crypt.dll lib/com_ahungry_curl.dll lib/com_ahungry_sqlite3.dll lib/com_ahungry_pq.dll janet.exe
 
 janet.exe: libjanet.dll
 	$(CC) $(CFLAGS) amalg/shell.c -o janet.exe $(LFLAGS)
@@ -57,6 +57,9 @@ lib/com_ahungry_json.dll: src/json/json.c
 
 lib/com_ahungry_meta.dll: src/meta.c
 	$(CC) $(CFLAGS) -shared src/meta.c -o $@ $(LFLAGS)
+
+lib/com_ahungry_punyserver.dll: src/puny-server-wrap.c
+	$(CC) $(CFLAGS) -I./src -shared src/puny-server.c src/puny-server-wrap.c -o $@ $(LFLAGS) -lws2_32 -lwsock32 -lwinpthread -pthread
 
 lib/com_ahungry_io.dll: src/com_ahungry_io.c
 	$(CC) $(CFLAGS) -I./src -shared src/com_ahungry_io.c -o $@ $(LFLAGS)
