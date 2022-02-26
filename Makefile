@@ -42,6 +42,7 @@ clean:
 	-jpm clear-cache
 	-jpm clear-manifest
 	-rm -f libjanet.so libjanet.so.1.16 janet.bin
+	-rm ./lib/*.so
 
 test:
 	janet -m ./lib test/test.janet
