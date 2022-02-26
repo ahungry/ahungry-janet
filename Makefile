@@ -21,10 +21,10 @@ package-windows:
 	make ming
 	./package-windows.sh
 
-libjanet.so.1.16:
+libjanet.so.1.20:
 	$(CC) $(CFLAGS) -shared -I./amalg amalg/janet.c -o $@ $(LFLAGS)
 
-libjanet.so: libjanet.so.1.16
+libjanet.so: libjanet.so.1.20
 	ln -sfn $< $@
 
 janet.bin: libjanet.so
@@ -41,7 +41,7 @@ clean:
 	-jpm clean
 	-jpm clear-cache
 	-jpm clear-manifest
-	-rm -f libjanet.so libjanet.so.1.16 janet.bin
+	-rm -f libjanet.so libjanet.so.1.20 janet.bin
 	-rm ./lib/*.so
 
 test:

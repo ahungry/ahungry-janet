@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2020 Calvin Rose
+* Copyright (c) 2021 Calvin Rose
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to
@@ -136,7 +136,6 @@ static JANET_THREAD_LOCAL int gbl_cols = 80;
 static JANET_THREAD_LOCAL char *gbl_history[JANET_HISTORY_MAX];
 static JANET_THREAD_LOCAL int gbl_history_count = 0;
 static JANET_THREAD_LOCAL int gbl_historyi = 0;
-static JANET_THREAD_LOCAL int gbl_sigint_flag = 0;
 static JANET_THREAD_LOCAL struct termios gbl_termios_start;
 static JANET_THREAD_LOCAL JanetByteView gbl_matches[JANET_MATCH_MAX];
 static JANET_THREAD_LOCAL int gbl_match_count = 0;
@@ -758,9 +757,9 @@ static int line() {
                 kleft();
                 break;
             case 3:     /* ctrl-c */
-                clearlines();
-                gbl_sigint_flag = 1;
-                return -1;
+                norawmode();
+                kill(getpid(), SIGINT);
+            /* fallthrough */
             case 17:    /* ctrl-q */
                 gbl_cancel_current_repl_form = 1;
                 clearlines();
@@ -962,11 +961,7 @@ void janet_line_get(const char *p, JanetBuffer *buffer) {
     }
     if (line()) {
         norawmode();
-        if (gbl_sigint_flag) {
-            raise(SIGINT);
-        } else {
-            fputc('\n', out);
-        }
+        fputc('\n', out);
         return;
     }
     fflush(stdin);
@@ -1021,7 +1016,6 @@ int main(int argc, char **argv) {
     janet_init_hash_key(hash_key);
 #endif
 
-
     /* Set up VM */
     janet_init();
 
@@ -1048,18 +1042,8 @@ int main(int argc, char **argv) {
     JanetFiber *fiber = janet_fiber(janet_unwrap_function(mainfun), 64, 1, mainargs);
     fiber->env = env;
 
-#ifdef JANET_EV
-    janet_gcroot(janet_wrap_fiber(fiber));
-    janet_schedule(fiber, janet_wrap_nil());
-    janet_loop();
-    status = janet_fiber_status(fiber);
-#else
-    Janet out;
-    status = janet_continue(fiber, janet_wrap_nil(), &out);
-    if (status != JANET_SIGNAL_OK && status != JANET_SIGNAL_EVENT) {
-        janet_stacktrace(fiber, out);
-    }
-#endif
+    /* Run the fiber in an event loop */
+    status = janet_loop_fiber(fiber);
 
     /* Deinitialize vm */
     janet_deinit();
