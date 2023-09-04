@@ -230,10 +230,9 @@
 # BEGIN Webview build stuff
 (defn shell
   "Helper for using pkg-config"
-  [str]
-  (def f (file/popen str))
-  (def output (file/read f :all))
-  (file/close f)
+  [cmd]
+  (def p (os/spawn (string/split " " cmd) :p {:in :pipe :out :pipe}))
+  (def output (:read (p :out) :all))
   (string/replace "\n" "" output))
 
 (def webview-def (case (os/which)
